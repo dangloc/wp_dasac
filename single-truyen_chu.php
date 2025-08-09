@@ -51,6 +51,7 @@ if (have_posts()) {
                                 $tac_gia = get_the_terms(get_the_ID(), 'tac_gia');
                                 if ($tac_gia && !is_wp_error($tac_gia)) : ?>
                                     <p class="mb-2">
+                                        <strong>Tác giả:</strong> 
                                         <a href="<?php echo get_term_link($tac_gia[0]); ?>"><?php echo esc_html($tac_gia[0]->name); ?></a>
                                     </p>
                                 <?php endif; ?>
@@ -60,6 +61,7 @@ if (have_posts()) {
                                 $trang_thai = get_the_terms(get_the_ID(), 'trang_thai');
                                 if ($trang_thai && !is_wp_error($trang_thai)) : ?>
                                     <p class="mb-2">
+                                         <strong>Trạng thái:</strong> 
                                         <span class="<?php echo esc_attr($trang_thai[0]->slug); ?>">
                                             <?php echo esc_html($trang_thai[0]->name); ?>
                                         </span>
@@ -71,6 +73,7 @@ if (have_posts()) {
                                 $the_loai = get_the_terms(get_the_ID(), 'the_loai');
                                 if ($the_loai && !is_wp_error($the_loai)) : ?>
                                     <p class="mb-2">
+                                        <strong>Thể loại:</strong> 
                                         <?php
                                         $the_loai_names = array();
                                         foreach ($the_loai as $term) {
@@ -86,25 +89,28 @@ if (have_posts()) {
                                 $nam_phat_hanh = get_the_terms(get_the_ID(), 'nam_phat_hanh');
                                 if ($nam_phat_hanh && !is_wp_error($nam_phat_hanh)) : ?>
                                     <p class="mb-2">
+                                        <strong>Năm phát hành:</strong> 
                                         <?php echo esc_html($nam_phat_hanh[0]->name); ?>
+                                    </p>
+                                <?php endif; ?>
+                                
+                                <?php
+                                // Hiển thị tags
+                                $tags = get_the_tags();
+                                if ($tags) : ?>
+                                    <p class="mb-2">
+                                        <strong>Tag:</strong> 
+                                        <?php
+                                        $tag_names = array();
+                                        foreach ($tags as $tag) {
+                                            $tag_names[] = '<a href="' . get_tag_link($tag->term_id) . '">#' . $tag->name . '</a>';
+                                        }
+                                        echo implode(' ', $tag_names);
+                                        ?>
                                     </p>
                                 <?php endif; ?>
                             </div>
 
-                            <?php
-                        // Hiển thị tags
-                        $tags = get_the_tags();
-                        if ($tags) : ?>
-                            <p class="entry-tags d-flex align-items-center flex-wrap mt-2 overflow-hidden">
-                                     <?php foreach ($tags as $tag) : ?>
-                                            <span>
-                                                <a style="white-space: nowrap;" href="<?php echo get_tag_link($tag->term_id); ?>" class="btn btn-sm btn-outline-secondary">
-                                                   #<?php echo esc_html($tag->name); ?>
-                                                </a>
-                                            </span>
-                                        <?php endforeach; ?>
-                            </p>
-                        <?php endif; ?>
                         </div>
                             <?php
                             // Hiển thị danh sách chương

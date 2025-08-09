@@ -898,7 +898,6 @@ label {
     background-color: transparent; }
     .single-truyen-chu .card-cutom-single .card-body-cutom-single {
       padding: 0;
-      display: flex;
       gap: 12px;
       flex-wrap: wrap; }
       .single-truyen-chu .card-cutom-single .card-body-cutom-single p {
@@ -938,7 +937,7 @@ label {
         margin-right: 4px;
         margin-bottom: 4px;
         display: inline-block; }
-      .single-truyen-chu .card-cutom-single .card-body-cutom-single p:nth-child(4) {
+      .single-truyen-chu .card-cutom-single .card-body-cutom-single p:nth-child(4) a {
         padding: 4px 8px;
         border: 2px solid #FFC300;
         border-radius: 30px;
