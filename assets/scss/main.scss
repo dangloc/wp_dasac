@@ -1,0 +1,40 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Island+Moments&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+// Abstracts
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
+@import 'abstracts/functions';
+
+// Base
+@import 'base/reset';
+@import 'base/typography';
+@import 'base/utilities';
+
+// Components
+@import 'components/buttons';
+@import 'components/forms';
+@import 'components/navigation';
+@import 'components/banner';
+@import 'components/item_card';
+@import 'components/slide_home';
+@import 'components/modal';
+@import 'components/pagination';
+@import 'components/sidebar';
+@import 'components/box_full';
+
+
+// Layout
+@import 'layout/header';
+@import 'layout/footer';
+@import 'layout/sidebar';
+@import 'layout/grid';
+
+// Pages
+@import 'pages/home';
+@import 'pages/archive';
+@import 'pages/single';
+@import 'pages/author';
+@import 'pages/rating';
+@import 'pages/goivip';
+@import 'pages/thongbao';

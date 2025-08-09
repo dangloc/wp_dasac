@@ -1,0 +1,210 @@
+.card-top-rate {
+    p {
+        margin: 4px 0 !important;
+    }
+    a {
+        color: $background-color;
+        padding: 0 8px;
+        text-decoration: underline;
+        color: $primary-color;
+        font-size: 18px;
+        font-weight: 500;
+    }
+}
+
+/* --- Giao diện Bảng Xếp Hạng Nâng Cấp --- */
+.ranking-page-container {
+    color: #e0e0e0;
+}
+
+.ranking-title {
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* 
+ * BƯỚC CẢI TIỆN QUAN TRỌNG CHO MOBILE
+ * Wrapper cho phép cuộn ngang khi nội dung vượt quá
+*/
+.ranking-table-wrapper {
+    overflow-x: auto; /* Đây là chìa khóa để cuộn ngang */
+    -webkit-overflow-scrolling: touch; /* Giúp cuộn mượt hơn trên iOS */
+    padding-bottom: 10px; /* Thêm chút đệm dưới thanh cuộn */
+}
+
+.ranking-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin-top: -10px;
+    width: 100%; /* Đảm bảo bảng luôn cố gắng chiếm đầy wrapper */
+    min-width: 750px; /* Đặt chiều rộng tối thiểu cho bảng */
+                      /* Con số này lớn hơn chiều rộng mobile thông thường, 
+                         buộc thanh cuộn phải xuất hiện. Bạn có thể điều chỉnh. */
+}
+
+.ranking-table thead th {
+    color: #aaa;
+    border: none;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 15px;
+    background-color: #1a1a1a; /* Thêm màu nền cho header để ghim (sticky) hoạt động đúng */
+}
+
+.ranking-table tbody tr {
+    background-color: #2c2c2c;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.ranking-table tbody tr:hover {
+    transform: translateY(-5px) scale(1.01);
+    background-color: #383838;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+}
+
+.ranking-table tbody td {
+    vertical-align: middle;
+    padding: 15px;
+    border: none;
+    background-color: #2c2c2c; /* Thêm màu nền cho TD để ghim (sticky) hoạt động đúng */
+}
+
+.ranking-table tbody td:first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+.ranking-table tbody td:last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+
+/* --- Style chi tiết cho các cột --- */
+.rank-cell {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.story-title-link {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #e0e0e0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.story-title-link:hover {
+    color: #ffd700;
+}
+
+.author-cell {
+    color: #ffffffce !important;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #fff;
+    white-space: nowrap; /* Ngăn text trong badge bị xuống dòng */
+}
+.status-da-hoan-thanh { background-color: #28a745; }
+.status-dang-tien-hanh { background-color: #007bff; }
+.status-chua-cap-nhat { background-color: #6c757d; }
+.status-tam-dung { background-color: #ffc107; color: #333; }
+
+.rating-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.star-rating {
+    color: #ffd700;
+    font-size: 1rem;
+    padding: 6px 0;
+}
+.rating-score {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.votes-cell {
+    font-weight: 500;
+    color: #ffffff !important;
+}
+
+
+/* --- HIỆU ỨNG ĐẶC BIỆT CHO TOP 3 --- */
+.rank-icon {
+    margin-right: 5px;
+    vertical-align: -1px;
+}
+
+tr.rank-gold {
+    border: 1px solid #ffd700;
+}
+tr.rank-gold td { background: #3a2b00; }
+tr.rank-gold .rank-cell { color: #ffd700; }
+tr.rank-gold .story-title-link { color: #ffec8b; }
+tr.rank-gold .rank-icon { color: #ffd700; }
+
+tr.rank-silver {
+    border: 1px solid #c0c0c0;
+}
+tr.rank-silver td { background: #4b4b4b; }
+tr.rank-silver .rank-cell { color: #c0c0c0; }
+tr.rank-silver .story-title-link { color: #e8e8e8; }
+
+tr.rank-bronze {
+    border: 1px solid #cd7f32;
+}
+tr.rank-bronze td { background: #503118; }
+tr.rank-bronze .rank-cell { color: #cd7f32; }
+tr.rank-bronze .story-title-link { color: #e6b98a; }
+
+/* 
+ * NÂNG CẤP TRẢI NGHIỆM: Ghim cột Hạng và Tên truyện khi cuộn ngang
+*/
+.ranking-table thead th:first-child,
+.ranking-table tbody td:first-child {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+}
+
+.ranking-table thead th:nth-child(2),
+.ranking-table tbody td:nth-child(2) {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 80px; /* Bằng chiều rộng của cột 1 */
+    z-index: 2;
+}
+
+/* Đảm bảo nền của cột ghim đè lên đúng */
+tr.rank-gold td:first-child,
+tr.rank-gold td:nth-child(2) {
+    background: #3a2b00; /* Dùng màu nền solid để sticky hoạt động tốt */
+}
+tr.rank-silver td:first-child,
+tr.rank-silver td:nth-child(2) {
+    background: #4b4b4b; /* Dùng màu nền solid */
+}
+tr.rank-bronze td:first-child,
+tr.rank-bronze td:nth-child(2) {
+    background: #503118; /* Dùng màu nền solid */
+}
+
+/* Bỏ media query cũ vì giờ đây chúng ta không ẩn cột nữa */
+/* @media (max-width: 768px) { ... } */

@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:
+      - main
+name: 🚀 Deploy website on push
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: Compile CSS from SCSS files
+        uses: gha-utilities/sass-build@v0.4.7
+        with:
+          source: assets/sass/style.scss
+          destination: style.css
+
+      - name: 📂 Sync files TuSacTruyen
+        uses: SamKirkland/FTP-Deploy-Action@4.3.0
+        with:
+          server: 103.200.23.120
+          username: commic@tusachiep.xyz
+          password: ${{ secrets.FTP_TUSACHIEP }}
+          server-dir: /wp-content/themes/commicpro/

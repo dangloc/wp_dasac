@@ -1,0 +1,69 @@
+.archive {
+    .page-header {
+      margin-bottom: 2rem;
+    }
+  
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+  }
+
+
+.page-title{
+    font-size: 24px;
+    margin-bottom: 0;
+}
+
+.taxonomy-section {
+    .taxonomy-title {
+        color: $primary-color;
+        font-size: 2rem;
+        font-weight: bold;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid $primary-color;
+    }
+
+    .card {
+        background-color: $dark-gray;
+        border: 1px solid $primary-color;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+
+            a {
+                color: $primary-color;
+                text-decoration: none;
+
+                &:hover {
+                    color: $secondary-color;
+                }
+            }
+        }
+
+        .card-text {
+            color: $white;
+            margin-bottom: 1rem;
+        }
+
+        .entry-meta {
+            color: rgba($primary-color, 0.7);
+            font-size: 0.9rem;
+        }
+
+        .card-img-top {
+            img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+        }
+    }
+}

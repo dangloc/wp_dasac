@@ -1,0 +1,101 @@
+#secondary {
+    background-color: transparent;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(80, 80, 80, 0.2);
+        filter: blur(70px);
+        z-index: -1;
+    }
+
+    .sidebar-top-rank {
+
+        .nav-pills{
+            background-color: #96949473;
+            border-radius: 8px;
+            padding: 6px 6px;
+
+            .nav-link{
+                color: #e53a22;
+                padding: 4px 12px;
+                width: 100%;
+            }
+            .active{
+                background-color: #e53a22;
+                color: #fff;
+            }
+        }
+        .sidebar-top-rank-item {
+            width: 100%;
+
+            .img-box {
+                width: calc(100% - 65%);
+
+                img {
+                    height: 100px;
+                    object-fit: cover;
+                }
+            }
+
+            .title-box {
+                width: calc(100% - 35%);
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+
+                .text-muted-custom {
+                    color: #656565;
+                    font-size: 12px;
+                    text-transform: lowercase;
+                }
+            }
+
+        }
+    }
+
+    .sidebar-top-new {
+        position: relative;
+
+        .sidebar-top-new-item {
+            position: relative;
+            width: 100%;
+
+            .img-box {
+                width: calc(100% - 65%);
+
+                img {
+                    height: 100px;
+                    object-fit: cover;
+                    width: 80px;
+                    border-radius: 8px;
+                }
+            }
+
+            .title-box {
+                width: calc(100% - 35%);
+                display: flex;
+                flex-direction: column;
+                justify-content: start;
+
+                .text-muted-custom {
+                    color: #656565;
+                    font-size: 12px;
+                    text-transform: lowercase;
+                }
+            }
+
+        }
+    }
+}
+
+.latest-chapter-info{
+    font-size: 12px;
+    color: #656565;
+    font-weight: 500;
+}

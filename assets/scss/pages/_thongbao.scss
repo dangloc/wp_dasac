@@ -1,0 +1,143 @@
+.page-thong-bao{
+    /* Thong Bao Archive Styles */
+.taxonomy-section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.taxonomy-section .taxonomy-title {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.taxonomy-section .taxonomy-title i {
+    color: #f4be44;
+}
+
+.taxonomy-section .card {
+    transition: all 0.3s ease;
+    border: none;
+    overflow: hidden;
+}
+
+.taxonomy-section .card:hover {
+    transform: translateY(-5px);
+}
+
+.taxonomy-section .card-img-top {
+    height: 200px;
+    overflow: hidden;
+}
+
+.taxonomy-section .card-img-top img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.taxonomy-section .card:hover .card-img-top img {
+    transform: scale(1.05);
+}
+
+.taxonomy-section .card-title {
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+}
+
+.taxonomy-section .card-title a:hover {
+    color: #f4be44 !important;
+}
+
+.taxonomy-section .card-text {
+    line-height: 1.6;
+}
+
+.taxonomy-section .entry-meta {
+    border-top: 1px solid #eee;
+    padding-top: 0.75rem;
+}
+
+.taxonomy-section .entry-meta i {
+    color: #f4be44;
+}
+
+/* Breadcrumb Styles */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+}
+
+.breadcrumb-item a {
+    color: #666;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #f4be44;
+}
+
+.breadcrumb-item.active {
+    color: #f4be44;
+}
+
+/* Alert Styles */
+.alert {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+.alert-info {
+    background-color: #e8f4fd;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Page Header Styles */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: #333;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f4be44;
+}
+
+    /* Fix text color for thong bao taxonomy cards */
+    .card,
+    .card * {
+    color: #fff !important;
+    }
+    .card .card-title a {
+    color: #f4be44 !important;
+    }
+    .card .card-title a:hover {
+    color: #ffd166 !important;
+    }
+    .card {
+    background: #232323;
+    }
+
+}

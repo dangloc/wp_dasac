@@ -1,0 +1,42 @@
+.form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #888;
+    border-radius: 8px;
+    background-color: #fff;
+    color: $background-color;
+    
+    &:focus {
+      outline: none;
+      border-color: $secondary-color;
+    }
+
+    &::placeholder {
+      color: rgba($background-color, 0.7);
+    }
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: $background-color;
+  }
+
+.logged-in-as{
+  a{
+    color: $background-color;
+
+    &:first-child{
+      display: none;
+    }
+  }
+}
+.must-log-in{
+  a{
+    color: $primary-color;
+  }
+}

@@ -1,0 +1,87 @@
+.box-full {
+    padding: 48px 0 32px;
+
+    .box-full-left {
+        overflow: hidden;
+        border-radius: 8px;
+
+        img{
+            height: 400px;
+        }
+
+        .count-port {
+            position: absolute;
+            top: 10%;
+            transform: rotate(45deg);
+            width: 100%;
+            text-align: center;
+            right: -20%;
+            background: rgb(131, 96, 0);
+            color: #fff;
+            font-weight: 600;
+            border: 3px solid #fff;
+        }
+
+        .box-full-left-title {
+            background: rgba(18, 28, 45, .82);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #fff;
+            padding: 20px 10px;
+            text-align: center;
+            width: 100%;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+    }
+
+
+    .box-full-right {
+
+
+        .box-full-right-item{
+            overflow: hidden;
+            border-radius: 8px;
+
+            a{
+                height: 190px;
+            }
+
+            img{
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+        .count-port {
+            position: absolute;
+            top: 7%;
+            transform: rotate(45deg);
+            width: 100%;
+            text-align: center;
+            right: -23%;
+            background: rgb(131, 96, 0);
+            color: #fff;
+            font-weight: 600;
+            border: 3px solid #fff;
+        }
+
+        .box-full-right-title {
+            background: rgba(18, 28, 45, .82);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #fff;
+            padding: 3px;
+            text-align: center;
+            width: 100%;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+    }
+}

@@ -1,0 +1,15 @@
+.main-navigation {
+    ul {
+      display: flex;
+      gap: 1rem;
+    }
+  
+    a {
+      color: $text-color;
+      padding: 0.5rem;
+  
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }

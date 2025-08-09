@@ -1,0 +1,380 @@
+.single {
+    .entry-header {
+      margin-bottom: 2rem;
+    }
+  
+    .entry-content {
+      max-width: 800px;
+      margin: 0 auto;
+
+      font-size: 20px;
+      line-height: 140%;
+    }
+  }
+
+.single-truyen-chu{
+    padding: 24px 0;
+    $color_1: #000;
+    $color_2: #FFD700;
+    $color_3: #232323;
+
+    .card-custom-single-truyen{
+        width: 100%;
+        height: 100%;
+
+        img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            aspect-ratio: 4/3;
+            border-radius: 12px;
+
+            @media screen and (max-width: 560px) {
+                height: 450px;
+            }
+        }
+    }
+
+    .combo-purchase-box{
+        position: relative;
+        background-color: transparent;
+        overflow: hidden;
+        border-radius: 12px;
+        box-shadow: 0 0 5px 0 rgba(255, 255, 255, 0.7);
+
+        .combo-purchase-box-bg{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 130%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(1px);
+
+            @media screen and (max-width: 560px) {  
+                filter: blur(100px);
+            }
+
+            img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                aspect-ratio: 16/9;
+            }
+        }
+
+        .card{
+            background-color: transparent;
+            height: 180px;
+            
+
+            @media screen and (max-width: 560px) {  
+                height: 250px;
+            }
+
+            .card-body{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: start;
+                height: 100%;
+                
+            }
+        }
+    }
+
+    .card-cutom-single{
+
+        background-color: transparent;
+        .card-body-cutom-single{
+            padding: 0;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+
+            p {
+                margin: 0;
+            }
+
+            // Tác giả - màu đỏ
+            p:first-child a {
+                padding: 4px 8px;
+                border: 2px solid #dc3545;
+                border-radius: 30px;
+                color: #dc3545;
+                text-decoration: none;
+                font-size: 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                
+                &::before {
+                    content: "👤";
+                    font-size: 10px;
+                }
+            }
+
+            // Trạng thái - màu xanh green
+            p:nth-child(2) span {
+                padding: 4px 8px;
+                border: 2px solid #28a745;
+                border-radius: 30px;
+                color: #28a745;
+                font-size: 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                
+                &::before {
+                    content: "🔄";
+                    font-size: 10px;
+                }
+            }
+
+            // Thể loại - màu xanh nước biển nhạt
+            p:nth-child(3) a {
+                padding: 4px 8px;
+                border: 2px solid #17a2b8;
+                border-radius: 30px;
+                color: #17a2b8;
+                text-decoration: none;
+                font-size: 12px;
+                margin-right: 4px;
+                margin-bottom: 4px;
+                display: inline-block;
+            }
+
+            // Năm phát hành - giữ nguyên style cũ
+            p:nth-child(4) {
+                padding: 4px 8px;
+                border: 2px solid #FFC300;
+                border-radius: 30px;
+                color: $primary-color;
+                font-size: 12px;
+            }
+        }
+    }
+
+    .card-custom{
+        img.img-fluid{
+            border-radius: 12px;
+        }
+    }
+
+    .chapter-list-box{
+        margin-top: 32px;
+
+        .chapter-list-custom {
+            background: #232323;
+            border-radius: 16px;
+            padding: 24px;
+            color: $color_1;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .chapter-list-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        .chapter-list-ul {
+
+            height: 70vh;
+            overflow-y: scroll;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            &::-webkit-scrollbar{
+                width: 6px;
+                background-color: #e53a22;  
+                border-radius: 4px;
+            }
+            &::-webkit-scrollbar-thumb {
+                background-color: #000000;
+            }
+            &::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                background-color: #e53a22;
+            }
+
+            li {
+                border-bottom: 1px solid #444;
+                padding: 0;
+                transition: background 0.2s, border-left 0.2s;
+                border-left: 4px solid transparent;
+                &:last-child {
+                    border-bottom: none;
+                }
+                a {
+                    padding: 12px 0;
+                    color: $color_1;
+                    text-decoration: none;
+                    display: block;
+                    font-size: 17px;
+                    transition: color 0.2s;
+                    &:hover {
+                        color: $color_2;
+                    }
+                }
+                &:hover {
+                    background: #181818;
+                    border-left: 4px solid #e53a22;
+                }
+                &:focus-within {
+                    background: #181818;
+                    border-left: 4px solid #e53a22;
+                }
+            }
+        }
+    }
+
+    
+    .btn-warning {
+        background: #e53a22;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        &:hover {
+            background: #FFC300;
+            color: $color_3;
+        }
+    }
+
+}
+
+.single-thong-bao {
+    .entry-header {
+        .entry-meta {
+            color: rgba($primary-color, 0.7);
+            font-size: 0.9rem;
+
+            span {
+                margin-right: 1.5rem;
+
+                i {
+                    margin-right: 0.5rem;
+                }
+
+                a {
+                    color: $primary-color;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: $secondary-color;
+                    }
+                }
+            }
+        }
+
+        .entry-title {
+            color: $primary-color;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .entry-thumbnail {
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+    }
+
+    .entry-content {
+        color: #000;
+        font-size: 1.1rem;
+        line-height: 1.8;
+
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        h2, h3, h4, h5, h6 {
+            color: $primary-color;
+            margin: 2rem 0 1rem;
+        }
+
+        a {
+            color: $primary-color;
+            text-decoration: none;
+
+            &:hover {
+                color: $secondary-color;
+            }
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+
+            li {
+                margin-bottom: 0.5rem;
+            }
+        }
+    }
+
+    .related-posts {
+        border-top: 2px solid $primary-color;
+        padding-top: 2rem;
+
+        .related-title {
+            color: $primary-color;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .related-post {
+            background-color: $dark-gray;
+            border: 1px solid $primary-color;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+
+            &:hover {
+                transform: translateY(-5px);
+            }
+
+            .related-thumbnail {
+                display: block;
+                margin-bottom: 1rem;
+
+                img {
+                    width: 100%;
+                    height: 200px;
+                    object-fit: cover;
+                    border-radius: 4px;
+                }
+            }
+
+            .related-post-title {
+                font-size: 1.2rem;
+                margin-bottom: 0.5rem;
+
+                a {
+                    color: $primary-color;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: $secondary-color;
+                    }
+                }
+            }
+
+            .related-post-date {
+                color: rgba($primary-color, 0.7);
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
