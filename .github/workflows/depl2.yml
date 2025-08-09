@@ -21,6 +21,6 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@4.3.0
         with:
           server: 103.200.23.120
-          username: commic@tusachiep.xyz
-          password: ${{ secrets.FTP_TUSACHIEP }}
+          username: dasactruyen@dasactruyen.xyz
+          password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /wp-content/themes/commicpro/

@@ -2187,71 +2187,47 @@ function get_top_viewed_truyen($posts_per_page = 10) {
 function display_top_viewed_truyen_sidebar($posts_per_page = 9) {
     $top_view_query = get_top_viewed_truyen($posts_per_page);
     if ($top_view_query->have_posts()) : ?>
-        <section class="section-slider pb-2">
+        <section class="section-table pb-2">
             <div class="section-title"><span>Top lượt xem</span></div>
-            <div class="swiper swiper-latest-top-sidebar">
-                <div class="swiper-wrapper">
-                    <?php 
-                    $rank = 1;
-                    while ($top_view_query->have_posts()) : $top_view_query->the_post(); ?>
-                        <div class="swiper-slide">
-                            <a href="<?php the_permalink(); ?>">
-                                <div class="d-flex sidebar-top-rank-item justify-content-between" style="gap: 12px;">
-                                    <div class="img-box position-relative">
-                                        <?php 
-                                        $featured_img_url = get_the_post_thumbnail_url(get_the_ID(), 'medium');
-                                        ?>
-                                        <img src="<?php echo $featured_img_url ?>" 
-                                            alt="<?php the_title_attribute(); ?>" 
-                                            onerror="this.src='<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png'"
-                                        />
-                                        <!-- Rank badge -->
-                                        <div class="rank-badge rank-<?php echo $rank; ?>">
-                                            <?php if ($rank == 1): ?>
-                                                1
-                                            <?php elseif ($rank == 2): ?>
-                                                2
-                                            <?php elseif ($rank == 3): ?>
-                                                3
-                                            <?php else: ?>
-                                                <span><?php echo $rank; ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                    <div class="title-box">
-                                        <div class="slide-title"><?php the_title(); ?></div>
-                                        <div>
-                                            <p class="count-port mb-0">
-                                                <small class="text-muted-custom">
-                                                    <i class="fas fa-eye"></i>
-                                                    <?php echo display_truyen_view_count(get_the_ID()); ?> lượt xem
-                                                </small>
-                                            </p>
+            <div class="ranking-table">
+                <?php 
+                $rank = 1;
+                while ($top_view_query->have_posts()) : $top_view_query->the_post(); ?>
+                    <div class="ranking-item d-flex align-items-center" data-rank="<?php echo $rank; ?>">
+                        <div class="rank-number">
+                            <span class="rank-badge rank-<?php echo $rank; ?>"><?php echo $rank; ?></span>
+                        </div>
+                        <div class="story-info flex-grow-1">
+                            <a href="<?php the_permalink(); ?>" class="story-link">
+                                <div class="story-title"><?php the_title(); ?></div>
+                                <div class="story-meta">
+                                    <?php
+                                    // Hiển thị thể loại
+                                    $the_loai = get_the_terms(get_the_ID(), 'the_loai');
+                                    if ($the_loai && !is_wp_error($the_loai)) : ?>
+                                        <small class="text-muted-custom genre-tags">
                                             <?php
-                                            // Hiển thị thể loại
-                                            $the_loai = get_the_terms(get_the_ID(), 'the_loai');
-                                            if ($the_loai && !is_wp_error($the_loai)) : ?>
-                                                <p class="mb-1">
-                                                    <small class="text-muted-custom">
-                                                        <?php
-                                                        $the_loai_names = array();
-                                                        foreach ($the_loai as $term) {
-                                                            $the_loai_names[] = $term->name;
-                                                        }
-                                                        echo esc_html(implode(', ', $the_loai_names));
-                                                        ?>
-                                                    </small>
-                                                </p>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
+                                            $the_loai_names = array();
+                                            foreach ($the_loai as $term) {
+                                                $the_loai_names[] = $term->name;
+                                            }
+                                            echo esc_html(implode(', ', array_slice($the_loai_names, 0, 2))); // Chỉ hiển thị 2 thể loại đầu
+                                            ?>
+                                        </small>
+                                    <?php endif; ?>
                                 </div>
                             </a>
                         </div>
-                    <?php 
-                    $rank++;
-                    endwhile; ?>
-                </div>
+                        <div class="story-stats">
+                            <small class="text-muted-custom view-count">
+                                <i class="fas fa-eye"></i>
+                                <?php echo display_truyen_view_count(get_the_ID()); ?>
+                            </small>
+                        </div>
+                    </div>
+                <?php 
+                $rank++;
+                endwhile; ?>
             </div>
         </section>
     <?php endif; 
@@ -2264,7 +2240,7 @@ function truyen_view_count_shortcode($atts) {
         'post_id' => get_the_ID(),
     ), $atts);
     
-    return '<span class="truyen-view-count">' . display_truyen_view_count($atts['post_id']) . ' lượt xem</span>';
+    return '<span class="truyen-view-count"><i class="fas fa-eye"></i> ' . display_truyen_view_count($atts['post_id']) . ' lượt xem</span>';
 }
 add_shortcode('truyen_view_count', 'truyen_view_count_shortcode');
 
