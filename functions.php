@@ -200,7 +200,7 @@ function register_post_type_truyen_chu() {
         'show_ui' => true,
         'show_in_rest' => true,
         'menu_icon' => 'dashicons-book-alt',
-        'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'comments'),
+        'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'comments', 'sticky'),
         'rewrite' => array('slug' => 'truyen-chu'),
         'has_archive' => true,
 		'taxonomies' => array('post_tag'),
@@ -219,6 +219,127 @@ function register_post_type_truyen_chu() {
     ));
 }
 add_action('init', 'register_post_type_truyen_chu');
+
+// Hỗ trợ sticky posts cho truyen_chu
+function enable_sticky_for_truyen_chu() {
+    // Thêm meta box sticky cho truyen_chu
+    add_meta_box(
+        'truyen_chu_sticky',
+        'Truyện nổi bật',
+        'truyen_chu_sticky_meta_box',
+        'truyen_chu',
+        'side',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'enable_sticky_for_truyen_chu');
+
+// Hiển thị meta box sticky
+function truyen_chu_sticky_meta_box($post) {
+    wp_nonce_field('truyen_chu_sticky_nonce', 'truyen_chu_sticky_nonce');
+    $is_sticky = get_post_meta($post->ID, '_sticky_truyen', true);
+    ?>
+    <label>
+        <input type="checkbox" name="sticky_truyen" value="1" <?php checked($is_sticky, '1'); ?> />
+        Đánh dấu là truyện nổi bật
+    </label>
+    <p><em>Truyện nổi bật sẽ hiển thị ở đầu danh sách.</em></p>
+    <?php
+}
+
+// Lưu thông tin sticky
+function save_truyen_chu_sticky($post_id) {
+    if (!isset($_POST['truyen_chu_sticky_nonce']) || !wp_verify_nonce($_POST['truyen_chu_sticky_nonce'], 'truyen_chu_sticky_nonce')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    $is_sticky = isset($_POST['sticky_truyen']) ? '1' : '0';
+    update_post_meta($post_id, '_sticky_truyen', $is_sticky);
+}
+add_action('save_post_truyen_chu', 'save_truyen_chu_sticky');
+
+// Thêm cột sticky trong admin list
+function add_sticky_column_to_truyen_chu($columns) {
+    $columns['sticky_truyen'] = 'Nổi bật';
+    return $columns;
+}
+add_filter('manage_truyen_chu_posts_columns', 'add_sticky_column_to_truyen_chu');
+
+// Hiển thị nội dung cột sticky
+function show_sticky_column_content($column, $post_id) {
+    if ($column === 'sticky_truyen') {
+        $is_sticky = get_post_meta($post_id, '_sticky_truyen', true);
+        if ($is_sticky === '1') {
+            echo '<span style="color: #d63384;">★ Nổi bật</span>';
+        } else {
+            echo '—';
+        }
+    }
+}
+add_action('manage_truyen_chu_posts_custom_column', 'show_sticky_column_content', 10, 2);
+
+// Function để lấy sticky truyen_chu
+function get_sticky_truyen_chu() {
+    $args = array(
+        'post_type' => 'truyen_chu',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_sticky_truyen',
+                'value' => '1',
+                'compare' => '='
+            )
+        ),
+        'orderby' => 'date',
+        'order' => 'DESC'
+    );
+    
+    $query = new WP_Query($args);
+    return $query->posts ? wp_list_pluck($query->posts, 'ID') : array();
+}
+
+// Sửa đổi query để hiển thị sticky posts đầu tiên
+function modify_truyen_chu_query_for_sticky($query) {
+    if (!is_admin() && $query->is_main_query()) {
+        if (is_post_type_archive('truyen_chu') || (is_home() && get_query_var('post_type') === 'truyen_chu')) {
+            $sticky_posts = get_sticky_truyen_chu();
+            
+            if (!empty($sticky_posts)) {
+                // Nếu đang ở trang đầu tiên
+                if (!$query->get('paged') || $query->get('paged') <= 1) {
+                    $query->set('post__not_in', array());
+                    $query->set('orderby', 'menu_order date');
+                    $query->set('order', 'DESC');
+                    
+                    // Thêm meta query để ưu tiên sticky posts
+                    $meta_query = $query->get('meta_query') ?: array();
+                    $meta_query[] = array(
+                        'relation' => 'OR',
+                        array(
+                            'key' => '_sticky_truyen',
+                            'value' => '1',
+                            'compare' => '='
+                        ),
+                        array(
+                            'key' => '_sticky_truyen',
+                            'compare' => 'NOT EXISTS'
+                        )
+                    );
+                    $query->set('meta_query', $meta_query);
+                }
+            }
+        }
+    }
+}
+add_action('pre_get_posts', 'modify_truyen_chu_query_for_sticky');
 
 function register_taxonomies_truyen_chu() {
     // Tác giả

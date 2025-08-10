@@ -47,7 +47,7 @@ if ($balance === '') {
         </div>
         <div class="row row-cols-2 row-cols-md-4 gx-3 gy-3">
             <?php 
-            $amounts = [20000, 50000, 100000, 200000,350000, 500000, 800000, 1500000, 2500000];
+            $amounts = [50000, 100000, 200000, 500000, 1000000];
             foreach ($amounts as $amount): ?>
                 <div class="col mb-3">
                     <button class="btn custom-btn w-100" data-bs-toggle="modal" data-bs-target="#depositModal" data-amount="<?php echo $amount; ?>">
