@@ -14,34 +14,34 @@
             height: 100%;
         }
 
-        .ky-chu-vo-danh,
-        .tan-linh-ky-chu,
-        .ky-chu-thuc-tinh{
+        .tap-vo,
+        .vo-sinh,
+        .vo-su{
             top: 4px;
             left: 1px;
         }
 
-        .ky-chu-phong-linh-hoa{
+        .ho-phap{
             top: 4px;
             left: -2px;
         }
 
-        .thong-linh-phong-linh-tran{
+        .vo-hau{
             top: -31px;
             left: 0;
         }
 
-        .ky-chu-toi-thuong{
+        .vo-tong{
             top: -20px;
             left: 0;
         }
 
-        .linh-vuong{
+        .dai-tong-su{
             top: -20px;
             left: 0;
         }
 
-        .linh-vuong-mong-canh{
+        .chi-ton-vo-thanh{
             transform: scale(1.5);
             top: 10px;
             left: 0;
@@ -146,9 +146,9 @@
     background: transparent;
     padding: 0 8px;
 
-    &--ky-chu-vo-danh,
-    &--tan-linh-ky-chu,
-    &--ky-chu-thuc-tinh {
+    &--tap-vo,
+    &--vo-sinh,
+    &--vo-su {
         font-family: $font-secondary;
         color: #0394fc; /* Color of tien-nu */
         overflow: hidden;
@@ -205,7 +205,7 @@
         }
     }
 
-    &--ky-chu-phong-linh-hoa {
+    &--ho-phap {
         font-family: $font-secondary;
         color: #0394fc; /* Color of ngoc-nu */
         overflow: hidden;
@@ -300,7 +300,7 @@
         }
     }
 
-    &--thong-linh-phong-linh-tran {
+    &--vo-hau {
         font-family: $font-secondary;
         color: #3103fc; /* Color of tien-co */
         overflow: hidden;
@@ -359,7 +359,7 @@
         }
     }
 
-    &--ky-chu-toi-thuong {
+    &--vo-tong {
         font-family: $font-secondary;
         color: #8c03fc; /* Color of huyen-nu */
         overflow: hidden;
@@ -418,7 +418,7 @@
         }
     }
 
-    &--linh-vuong {
+    &--dai-tong-su {
         font-family: $font-secondary;
         color: #f003fc; /* Color of than-nu */
         overflow: hidden;
@@ -477,7 +477,7 @@
         }
     }
 
-    &--linh-vuong-mong-canh {
+    &--chi-ton-vo-thanh {
         font-family: $font-secondary;
         color: #fc0303; /* Color of thien-ton */
         overflow: hidden;

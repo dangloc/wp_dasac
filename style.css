@@ -1096,24 +1096,24 @@ label {
     border-radius: 50%;
     width: 100%;
     height: 100%; }
-  .author-page .avatar-author .ky-chu-vo-danh,
-  .author-page .avatar-author .tan-linh-ky-chu,
-  .author-page .avatar-author .ky-chu-thuc-tinh {
+  .author-page .avatar-author .tap-vo,
+  .author-page .avatar-author .vo-sinh,
+  .author-page .avatar-author .vo-su {
     top: 4px;
     left: 1px; }
-  .author-page .avatar-author .ky-chu-phong-linh-hoa {
+  .author-page .avatar-author .ho-phap {
     top: 4px;
     left: -2px; }
-  .author-page .avatar-author .thong-linh-phong-linh-tran {
+  .author-page .avatar-author .vo-hau {
     top: -31px;
     left: 0; }
-  .author-page .avatar-author .ky-chu-toi-thuong {
+  .author-page .avatar-author .vo-tong {
     top: -20px;
     left: 0; }
-  .author-page .avatar-author .linh-vuong {
+  .author-page .avatar-author .dai-tong-su {
     top: -20px;
     left: 0; }
-  .author-page .avatar-author .linh-vuong-mong-canh {
+  .author-page .avatar-author .chi-ton-vo-thanh {
     transform: scale(1.5);
     top: 10px;
     left: 0; }
@@ -1184,75 +1184,75 @@ label {
   box-sizing: border-box;
   background: transparent;
   padding: 0 8px; }
-  .btn-cus-vip--ky-chu-vo-danh, .btn-cus-vip--tan-linh-ky-chu, .btn-cus-vip--ky-chu-thuc-tinh {
+  .btn-cus-vip--tap-vo, .btn-cus-vip--vo-sinh, .btn-cus-vip--vo-su {
     font-family: "Island Moments", cursive;
     color: #0394fc;
     /* Color of tien-nu */
     overflow: hidden;
     transition: 0.5s; }
-    .btn-cus-vip--ky-chu-vo-danh:hover, .btn-cus-vip--tan-linh-ky-chu:hover, .btn-cus-vip--ky-chu-thuc-tinh:hover {
+    .btn-cus-vip--tap-vo:hover, .btn-cus-vip--vo-sinh:hover, .btn-cus-vip--vo-su:hover {
       background: #0394fc;
       /* Color of tien-nu */
       color: #050801;
       box-shadow: 0 0 5px #0394fc, 0 0 25px #0394fc, 0 0 50px #0394fc, 0 0 200px #0394fc; }
-    .btn-cus-vip--ky-chu-vo-danh::before, .btn-cus-vip--tan-linh-ky-chu::before, .btn-cus-vip--ky-chu-thuc-tinh::before {
+    .btn-cus-vip--tap-vo::before, .btn-cus-vip--vo-sinh::before, .btn-cus-vip--vo-su::before {
       content: "";
       position: absolute;
       top: 2px;
       left: 2px;
       bottom: 2px; }
-    .btn-cus-vip--ky-chu-vo-danh span, .btn-cus-vip--tan-linh-ky-chu span, .btn-cus-vip--ky-chu-thuc-tinh span {
+    .btn-cus-vip--tap-vo span, .btn-cus-vip--vo-sinh span, .btn-cus-vip--vo-su span {
       position: absolute;
       background: linear-gradient(180deg, transparent, #0394fc);
       /* Color of tien-nu */ }
-      .btn-cus-vip--ky-chu-vo-danh span:nth-child(1), .btn-cus-vip--tan-linh-ky-chu span:nth-child(1), .btn-cus-vip--ky-chu-thuc-tinh span:nth-child(1) {
+      .btn-cus-vip--tap-vo span:nth-child(1), .btn-cus-vip--vo-sinh span:nth-child(1), .btn-cus-vip--vo-su span:nth-child(1) {
         top: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation1 1s linear infinite; }
-      .btn-cus-vip--ky-chu-vo-danh span:nth-child(2), .btn-cus-vip--tan-linh-ky-chu span:nth-child(2), .btn-cus-vip--ky-chu-thuc-tinh span:nth-child(2) {
+      .btn-cus-vip--tap-vo span:nth-child(2), .btn-cus-vip--vo-sinh span:nth-child(2), .btn-cus-vip--vo-su span:nth-child(2) {
         top: 0;
         right: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation2 1s linear infinite;
         animation-delay: 0.25s; }
-      .btn-cus-vip--ky-chu-vo-danh span:nth-child(3), .btn-cus-vip--tan-linh-ky-chu span:nth-child(3), .btn-cus-vip--ky-chu-thuc-tinh span:nth-child(3) {
+      .btn-cus-vip--tap-vo span:nth-child(3), .btn-cus-vip--vo-sinh span:nth-child(3), .btn-cus-vip--vo-su span:nth-child(3) {
         bottom: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation3 1s linear infinite; }
-      .btn-cus-vip--ky-chu-vo-danh span:nth-child(4), .btn-cus-vip--tan-linh-ky-chu span:nth-child(4), .btn-cus-vip--ky-chu-thuc-tinh span:nth-child(4) {
+      .btn-cus-vip--tap-vo span:nth-child(4), .btn-cus-vip--vo-sinh span:nth-child(4), .btn-cus-vip--vo-su span:nth-child(4) {
         top: 0;
         left: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation4 2s linear infinite;
         animation-delay: 0.25s; }
-  .btn-cus-vip--ky-chu-phong-linh-hoa {
+  .btn-cus-vip--ho-phap {
     font-family: "Island Moments", cursive;
     color: #0394fc;
     /* Color of ngoc-nu */
     overflow: hidden;
     transition: 0.5s; }
-    .btn-cus-vip--ky-chu-phong-linh-hoa:hover {
+    .btn-cus-vip--ho-phap:hover {
       background: #0394fc;
       /* Color of ngoc-nu */
       color: #050801;
       box-shadow: 0 0 5px #0394fc, 0 0 25px #0394fc, 0 0 50px #0394fc, 0 0 200px #0394fc; }
-    .btn-cus-vip--ky-chu-phong-linh-hoa::before {
+    .btn-cus-vip--ho-phap::before {
       content: "";
       position: absolute;
       top: 2px;
       left: 2px;
       bottom: 2px; }
-    .btn-cus-vip--ky-chu-phong-linh-hoa span {
+    .btn-cus-vip--ho-phap span {
       position: absolute;
       background: linear-gradient(180deg, transparent, #0394fc);
       /* Color of ngoc-nu */ }
-      .btn-cus-vip--ky-chu-phong-linh-hoa span:nth-child(1) {
+      .btn-cus-vip--ho-phap span:nth-child(1) {
         top: 0;
         left: 0;
         width: 100%;
@@ -1263,7 +1263,7 @@ label {
     transform: translateX(-100%); }
   100% {
     transform: translateX(100%); } }
-      .btn-cus-vip--ky-chu-phong-linh-hoa span:nth-child(2) {
+      .btn-cus-vip--ho-phap span:nth-child(2) {
         top: 0;
         right: 0;
         width: 3px;
@@ -1275,7 +1275,7 @@ label {
     transform: translateY(-100%); }
   100% {
     transform: translateY(100%); } }
-      .btn-cus-vip--ky-chu-phong-linh-hoa span:nth-child(3) {
+      .btn-cus-vip--ho-phap span:nth-child(3) {
         bottom: 0;
         left: 0;
         width: 100%;
@@ -1286,7 +1286,7 @@ label {
     transform: translateX(100%); }
   100% {
     transform: translateX(-100%); } }
-      .btn-cus-vip--ky-chu-phong-linh-hoa span:nth-child(4) {
+      .btn-cus-vip--ho-phap span:nth-child(4) {
         top: 0;
         left: 0;
         width: 3px;
@@ -1298,188 +1298,188 @@ label {
     transform: translateY(100%); }
   100% {
     transform: translateY(-100%); } }
-  .btn-cus-vip--thong-linh-phong-linh-tran {
+  .btn-cus-vip--vo-hau {
     font-family: "Island Moments", cursive;
     color: #3103fc;
     /* Color of tien-co */
     overflow: hidden;
     transition: 0.5s; }
-    .btn-cus-vip--thong-linh-phong-linh-tran:hover {
+    .btn-cus-vip--vo-hau:hover {
       background: #3103fc;
       /* Color of tien-co */
       color: #050801;
       box-shadow: 0 0 5px #3103fc, 0 0 25px #3103fc, 0 0 50px #3103fc, 0 0 200px #3103fc; }
-    .btn-cus-vip--thong-linh-phong-linh-tran::before {
+    .btn-cus-vip--vo-hau::before {
       content: "";
       position: absolute;
       top: 2px;
       left: 2px;
       bottom: 2px; }
-    .btn-cus-vip--thong-linh-phong-linh-tran span {
+    .btn-cus-vip--vo-hau span {
       position: absolute;
       background: linear-gradient(180deg, transparent, #3103fc);
       /* Color of tien-co */ }
-      .btn-cus-vip--thong-linh-phong-linh-tran span:nth-child(1) {
+      .btn-cus-vip--vo-hau span:nth-child(1) {
         top: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation1 1s linear infinite; }
-      .btn-cus-vip--thong-linh-phong-linh-tran span:nth-child(2) {
+      .btn-cus-vip--vo-hau span:nth-child(2) {
         top: 0;
         right: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation2 1s linear infinite;
         animation-delay: 0.25s; }
-      .btn-cus-vip--thong-linh-phong-linh-tran span:nth-child(3) {
+      .btn-cus-vip--vo-hau span:nth-child(3) {
         bottom: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation3 1s linear infinite; }
-      .btn-cus-vip--thong-linh-phong-linh-tran span:nth-child(4) {
+      .btn-cus-vip--vo-hau span:nth-child(4) {
         top: 0;
         left: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation4 2s linear infinite;
         animation-delay: 0.25s; }
-  .btn-cus-vip--ky-chu-toi-thuong {
+  .btn-cus-vip--vo-tong {
     font-family: "Island Moments", cursive;
     color: #8c03fc;
     /* Color of huyen-nu */
     overflow: hidden;
     transition: 0.5s; }
-    .btn-cus-vip--ky-chu-toi-thuong:hover {
+    .btn-cus-vip--vo-tong:hover {
       background: #8c03fc;
       /* Color of huyen-nu */
       color: #050801;
       box-shadow: 0 0 5px #8c03fc, 0 0 25px #8c03fc, 0 0 50px #8c03fc, 0 0 200px #8c03fc; }
-    .btn-cus-vip--ky-chu-toi-thuong::before {
+    .btn-cus-vip--vo-tong::before {
       content: "";
       position: absolute;
       top: 2px;
       left: 2px;
       bottom: 2px; }
-    .btn-cus-vip--ky-chu-toi-thuong span {
+    .btn-cus-vip--vo-tong span {
       position: absolute;
       background: linear-gradient(180deg, transparent, #8c03fc);
       /* Color of huyen-nu */ }
-      .btn-cus-vip--ky-chu-toi-thuong span:nth-child(1) {
+      .btn-cus-vip--vo-tong span:nth-child(1) {
         top: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation1 1s linear infinite; }
-      .btn-cus-vip--ky-chu-toi-thuong span:nth-child(2) {
+      .btn-cus-vip--vo-tong span:nth-child(2) {
         top: 0;
         right: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation2 1s linear infinite;
         animation-delay: 0.25s; }
-      .btn-cus-vip--ky-chu-toi-thuong span:nth-child(3) {
+      .btn-cus-vip--vo-tong span:nth-child(3) {
         bottom: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation3 1s linear infinite; }
-      .btn-cus-vip--ky-chu-toi-thuong span:nth-child(4) {
+      .btn-cus-vip--vo-tong span:nth-child(4) {
         top: 0;
         left: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation4 2s linear infinite;
         animation-delay: 0.25s; }
-  .btn-cus-vip--linh-vuong {
+  .btn-cus-vip--dai-tong-su {
     font-family: "Island Moments", cursive;
     color: #f003fc;
     /* Color of than-nu */
     overflow: hidden;
     transition: 0.5s; }
-    .btn-cus-vip--linh-vuong:hover {
+    .btn-cus-vip--dai-tong-su:hover {
       background: #f003fc;
       /* Color of than-nu */
       color: #050801;
       box-shadow: 0 0 5px #f003fc, 0 0 25px #f003fc, 0 0 50px #f003fc, 0 0 200px #f003fc; }
-    .btn-cus-vip--linh-vuong::before {
+    .btn-cus-vip--dai-tong-su::before {
       content: "";
       position: absolute;
       top: 2px;
       left: 2px;
       bottom: 2px; }
-    .btn-cus-vip--linh-vuong span {
+    .btn-cus-vip--dai-tong-su span {
       position: absolute;
       background: linear-gradient(180deg, transparent, #f003fc);
       /* Color of than-nu */ }
-      .btn-cus-vip--linh-vuong span:nth-child(1) {
+      .btn-cus-vip--dai-tong-su span:nth-child(1) {
         top: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation1 1s linear infinite; }
-      .btn-cus-vip--linh-vuong span:nth-child(2) {
+      .btn-cus-vip--dai-tong-su span:nth-child(2) {
         top: 0;
         right: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation2 1s linear infinite;
         animation-delay: 0.25s; }
-      .btn-cus-vip--linh-vuong span:nth-child(3) {
+      .btn-cus-vip--dai-tong-su span:nth-child(3) {
         bottom: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation3 1s linear infinite; }
-      .btn-cus-vip--linh-vuong span:nth-child(4) {
+      .btn-cus-vip--dai-tong-su span:nth-child(4) {
         top: 0;
         left: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation4 2s linear infinite;
         animation-delay: 0.25s; }
-  .btn-cus-vip--linh-vuong-mong-canh {
+  .btn-cus-vip--chi-ton-vo-thanh {
     font-family: "Island Moments", cursive;
     color: #fc0303;
     /* Color of thien-ton */
     overflow: hidden;
     transition: 0.5s; }
-    .btn-cus-vip--linh-vuong-mong-canh:hover {
+    .btn-cus-vip--chi-ton-vo-thanh:hover {
       background: #fc0303;
       /* Color of thien-ton */
       color: #050801;
       box-shadow: 0 0 5px #fc0303, 0 0 25px #fc0303, 0 0 50px #fc0303, 0 0 200px #fc0303; }
-    .btn-cus-vip--linh-vuong-mong-canh::before {
+    .btn-cus-vip--chi-ton-vo-thanh::before {
       content: "";
       position: absolute;
       top: 2px;
       left: 2px;
       bottom: 2px; }
-    .btn-cus-vip--linh-vuong-mong-canh span {
+    .btn-cus-vip--chi-ton-vo-thanh span {
       position: absolute;
       background: linear-gradient(180deg, transparent, #fc0303);
       /* Color of thien-ton */ }
-      .btn-cus-vip--linh-vuong-mong-canh span:nth-child(1) {
+      .btn-cus-vip--chi-ton-vo-thanh span:nth-child(1) {
         top: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation1 1s linear infinite; }
-      .btn-cus-vip--linh-vuong-mong-canh span:nth-child(2) {
+      .btn-cus-vip--chi-ton-vo-thanh span:nth-child(2) {
         top: 0;
         right: 0;
         width: 3px;
         height: 100%;
         animation: borderAnimation2 1s linear infinite;
         animation-delay: 0.25s; }
-      .btn-cus-vip--linh-vuong-mong-canh span:nth-child(3) {
+      .btn-cus-vip--chi-ton-vo-thanh span:nth-child(3) {
         bottom: 0;
         left: 0;
         width: 100%;
         height: 3px;
         animation: borderAnimation3 1s linear infinite; }
-      .btn-cus-vip--linh-vuong-mong-canh span:nth-child(4) {
+      .btn-cus-vip--chi-ton-vo-thanh span:nth-child(4) {
         top: 0;
         left: 0;
         width: 3px;

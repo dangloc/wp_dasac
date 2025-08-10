@@ -106,29 +106,29 @@ function commicpro_comment_callback($comment, $args, $depth) {
 						<?php if ($vip_name): ?>
 							<button class="btn-cus-vip btn-cus-vip--sm <?php
 								switch ($vip_name) {
-                                    case 'Ký Chủ Vô Danh':
-                                        echo 'btn-cus-vip--ky-chu-vo-danh';
+                                    case 'Tập Võ':
+                                        echo 'btn-cus-vip--tap-vo';
                                         break;
-                                    case 'Tân Linh Ký Chủ':
-                                        echo 'btn-cus-vip--tan-linh-ky-chu';
+                                    case 'Võ Sinh':
+                                        echo 'btn-cus-vip--vo-sinh';
                                         break;
-                                    case 'Ký Chủ Thức Tỉnh':
-                                        echo 'btn-cus-vip--ky-chu-thuc-tinh';
+                                    case 'Võ Sư':
+                                        echo 'btn-cus-vip--vo-su';
                                         break;
-                                    case 'Ký Chủ Phong Linh Hóa':
-                                        echo 'btn-cus-vip--ky-chu-phong-linh-hoa';
+                                    case 'Hộ Pháp':
+                                        echo 'btn-cus-vip--ho-phap';
                                         break;
-                                    case 'Thống Lĩnh Phong Linh Trấn':
-                                        echo 'btn-cus-vip--thong-linh-phong-linh-tran';
+                                    case 'Võ Hầu':
+                                        echo 'btn-cus-vip--vo-hau';
                                         break;
-                                    case 'Ký Chủ Tối Thượng':
-                                        echo 'btn-cus-vip--ky-chu-toi-thuong';
+                                    case 'Võ Tông':
+                                        echo 'btn-cus-vip--vo-tong';
                                         break;
-                                    case 'Linh Vương':
-                                        echo 'btn-cus-vip--linh-vuong';
+                                    case 'Đại Tông Sư':
+                                        echo 'btn-cus-vip--dai-tong-su';
                                         break;
-                                    case 'Linh Vương Mộng Cảnh':
-                                        echo 'btn-cus-vip--linh-vuong-mong-canh';
+                                    case 'Chí Tôn Võ Thánh':
+                                        echo 'btn-cus-vip--chi-ton-vo-thanh';
                                         break;
                                     default:
                                         echo '';

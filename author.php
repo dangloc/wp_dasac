@@ -14,16 +14,17 @@ $user_balance = get_user_meta($author_id, '_user_balance', true);
 $vip_name = get_user_meta($author_id, '_user_vip_name', true);
 $is_vip = check_user_vip_status($author_id);
 
-$kychuvodanh = get_template_directory_uri() . '/assets/images/tiennu.png';
-$tanlinhkichu = get_template_directory_uri() . '/assets/images/tiennu.png';
-$kichuthuctinh = get_template_directory_uri() . '/assets/images/tiennu.png';
-$kichuphonglinhhoa = get_template_directory_uri() . '/assets/images/ngocnu.png';
-$thonglinhphonglinhtran = get_template_directory_uri() . '/assets/images/tienco.png';
-$kichutoithuong = get_template_directory_uri() . '/assets/images/huyennu.png';
-$linhvuong = get_template_directory_uri() . '/assets/images/thannu.png';
-$linhvuongmongcanh = get_template_directory_uri() . '/assets/images/thienton.png';
+// VIP rank images
+$tapvo = get_template_directory_uri() . '/assets/images/tiennu.png';
+$vosinh = get_template_directory_uri() . '/assets/images/tiennu.png';
+$vosu = get_template_directory_uri() . '/assets/images/tiennu.png';
+$hophap = get_template_directory_uri() . '/assets/images/ngocnu.png';
+$vohau = get_template_directory_uri() . '/assets/images/tienco.png';
+$votong = get_template_directory_uri() . '/assets/images/huyennu.png';
+$daitongsu = get_template_directory_uri() . '/assets/images/thannu.png';
+$chitonvothanh = get_template_directory_uri() . '/assets/images/thienton.png';
 
-$type_vip_name = ['Ký Chủ Vô Danh', 'Tân Linh Ký Chủ', 'Ký Chủ Thức Tỉnh', 'Ký Chủ Phong Linh Hóa', 'Thống Lĩnh Phong Linh Trấn', 'Ký Chủ Tối Thượng', 'Linh Vương', 'Linh Vương Mộng Cảnh'];
+$type_vip_name = ['Tập Võ', 'Võ Sinh', 'Võ Sư', 'Hộ Pháp', 'Võ Hầu', 'Võ Tông', 'Đại Tông Sư', 'Chí Tôn Võ Thánh'];
 // Get author's stories
 $args = array(
     'post_type' => 'truyen_chu',
@@ -46,29 +47,29 @@ $author_stories = new WP_Query($args);
                         <div class="avatar-author-bg
                             <?php
                                 switch ($vip_name) {
-                                    case 'Ký Chủ Vô Danh':
-                                        echo 'ky-chu-vo-danh';
+                                    case 'Tập Võ':
+                                        echo 'tap-vo';
                                         break;
-                                    case 'Tân Linh Ký Chủ':
-                                        echo 'tan-linh-ky-chu';
+                                    case 'Võ Sinh':
+                                        echo 'vo-sinh';
                                         break;
-                                    case 'Ký Chủ Thức Tỉnh':
-                                        echo 'ky-chu-thuc-tinh';
+                                    case 'Võ Sư':
+                                        echo 'vo-su';
                                         break;
-                                    case 'Ký Chủ Phong Linh Hóa':
-                                        echo 'ky-chu-phong-linh-hoa';
+                                    case 'Hộ Pháp':
+                                        echo 'ho-phap';
                                         break;
-                                    case 'Thống Lĩnh Phong Linh Trấn':
-                                        echo 'thong-linh-phong-linh-tran';
+                                    case 'Võ Hầu':
+                                        echo 'vo-hau';
                                         break;
-                                    case 'Ký Chủ Tối Thượng':
-                                        echo 'ky-chu-toi-thuong';
+                                    case 'Võ Tông':
+                                        echo 'vo-tong';
                                         break;
-                                    case 'Linh Vương':
-                                        echo 'linh-vuong';
+                                    case 'Đại Tông Sư':
+                                        echo 'dai-tong-su';
                                         break;
-                                    case 'Linh Vương Mộng Cảnh':
-                                        echo 'linh-vuong-mong-canh';
+                                    case 'Chí Tôn Võ Thánh':
+                                        echo 'chi-ton-vo-thanh';
                                         break;
                                     default:
                                         // Nếu không khớp với loại VIP nào
@@ -79,29 +80,29 @@ $author_stories = new WP_Query($args);
                         ">
                             <?php 
                                 switch ($vip_name) {
-                                    case 'Ký Chủ Vô Danh':
-                                        echo '<img src="' . $kychuvodanh . '" alt="Ký Chủ Vô Danh">';
+                                    case 'Tập Võ':
+                                        echo '<img src="' . $tapvo . '" alt="Tập Võ">';
                                         break;
-                                    case 'Tân Linh Ký Chủ':
-                                        echo '<img src="' . $tanlinhkichu . '" alt="Tân Linh Ký Chủ">';
+                                    case 'Võ Sinh':
+                                        echo '<img src="' . $vosinh . '" alt="Võ Sinh">';
                                         break;
-                                    case 'Ký Chủ Thức Tỉnh':
-                                        echo '<img src="' . $kichuthuctinh . '" alt="Ký Chủ Thức Tỉnh">';
+                                    case 'Võ Sư':
+                                        echo '<img src="' . $vosu . '" alt="Võ Sư">';
                                         break;
-                                    case 'Ký Chủ Phong Linh Hóa':
-                                        echo '<img src="' . $kichuphonglinhhoa . '" alt="Ký Chủ Phong Linh Hóa">';
+                                    case 'Hộ Pháp':
+                                        echo '<img src="' . $hophap . '" alt="Hộ Pháp">';
                                         break;
-                                    case 'Thống Lĩnh Phong Linh Trấn':
-                                        echo '<img src="' . $thonglinhphonglinhtran . '" alt="Thống Lĩnh Phong Linh Trấn">';
+                                    case 'Võ Hầu':
+                                        echo '<img src="' . $vohau . '" alt="Võ Hầu">';
                                         break;
-                                    case 'Ký Chủ Tối Thượng':
-                                        echo '<img src="' . $kichutoithuong . '" alt="Ký Chủ Tối Thượng">';
+                                    case 'Võ Tông':
+                                        echo '<img src="' . $votong . '" alt="Võ Tông">';
                                         break;
-                                    case 'Linh Vương':
-                                        echo '<img src="' . $linhvuong . '" alt="Linh Vương">';
+                                    case 'Đại Tông Sư':
+                                        echo '<img src="' . $daitongsu . '" alt="Đại Tông Sư">';
                                         break;
-                                    case 'Linh Vương Mộng Cảnh':
-                                        echo '<img src="' . $linhvuongmongcanh . '" alt="Linh Vương Mộng Cảnh">';
+                                    case 'Chí Tôn Võ Thánh':
+                                        echo '<img src="' . $chitonvothanh . '" alt="Chí Tôn Võ Thánh">';
                                         break;
                                     default:
                                         // Nếu không khớp với loại VIP nào
@@ -127,29 +128,29 @@ $author_stories = new WP_Query($args);
                         <?php if ($vip_name): ?>
                             <button class="btn-cus-vip <?php
                                  switch ($vip_name) {
-                                    case 'Ký Chủ Vô Danh':
-                                        echo 'btn-cus-vip--ky-chu-vo-danh';
+                                    case 'Tập Võ':
+                                        echo 'btn-cus-vip--tap-vo';
                                         break;
-                                    case 'Tân Linh Ký Chủ':
-                                        echo 'btn-cus-vip--tan-linh-ky-chu';
+                                    case 'Võ Sinh':
+                                        echo 'btn-cus-vip--vo-sinh';
                                         break;
-                                    case 'Ký Chủ Thức Tỉnh':
-                                        echo 'btn-cus-vip--ky-chu-thuc-tinh';
+                                    case 'Võ Sư':
+                                        echo 'btn-cus-vip--vo-su';
                                         break;
-                                    case 'Ký Chủ Phong Linh Hóa':
-                                        echo 'btn-cus-vip--ky-chu-phong-linh-hoa';
+                                    case 'Hộ Pháp':
+                                        echo 'btn-cus-vip--ho-phap';
                                         break;
-                                    case 'Thống Lĩnh Phong Linh Trấn':
-                                        echo 'btn-cus-vip--thong-linh-phong-linh-tran';
+                                    case 'Võ Hầu':
+                                        echo 'btn-cus-vip--vo-hau';
                                         break;
-                                    case 'Ký Chủ Tối Thượng':
-                                        echo 'btn-cus-vip--ky-chu-toi-thuong';
+                                    case 'Võ Tông':
+                                        echo 'btn-cus-vip--vo-tong';
                                         break;
-                                    case 'Linh Vương':
-                                        echo 'btn-cus-vip--linh-vuong';
+                                    case 'Đại Tông Sư':
+                                        echo 'btn-cus-vip--dai-tong-su';
                                         break;
-                                    case 'Linh Vương Mộng Cảnh':
-                                        echo 'btn-cus-vip--linh-vuong-mong-canh';
+                                    case 'Chí Tôn Võ Thánh':
+                                        echo 'btn-cus-vip--chi-ton-vo-thanh';
                                         break;
                                     default:
                                         echo '';
