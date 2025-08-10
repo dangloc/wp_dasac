@@ -1469,7 +1469,7 @@ function process_vip_purchase_handler() {
         $package_price = 350000;
         $package_duration = 2; // 2 tháng
     } elseif ($package_type === 'vip_permanent') {
-        $package_price = 800000;
+        $package_price = 999999;
         $package_duration = -1; // -1 đại diện cho vĩnh viễn
     } else {
         wp_send_json_error('Gói VIP không hợp lệ');

@@ -82,7 +82,7 @@ if ($vip_data && $vip_data['is_active']) {
                      <div class="corner-ribbon"><span>Tối ưu nhất</span></div>
                     <div class="card-body mt-3">
                         <h5 class="card-title">VIP VĨNH VIỄN</h5>
-                        <h1 class="card-price">800,000<small class="price-currency"> kim tệ</small></h1>
+                        <h1 class="card-price">999,999<small class="price-currency"> kim tệ</small></h1>
                         <p class="price-duration">/ Vĩnh Cửu</p>
                         
                         <ul class="list-unstyled feature-list">
