@@ -471,37 +471,37 @@ if (have_posts()) {
 
 
                     <?php
-                        $the_loai = get_the_terms(get_the_ID(), 'the_loai');
-                        if ($the_loai && !is_wp_error($the_loai)) {
-                            $the_loai_ids = wp_list_pluck($the_loai, 'term_id');
-                            
-                            $related_args = array(
-                                'post_type' => 'truyen_chu',
-                                'posts_per_page' => 4,
-                                'post__not_in' => array(get_the_ID()),
-                                'tax_query' => array(
-                                    array(
-                                        'taxonomy' => 'the_loai',
-                                        'field' => 'term_id',
-                                        'terms' => $the_loai_ids
-                                    )
+                    $tac_gia = get_the_terms(get_the_ID(), 'tac_gia');
+                    if ($tac_gia && !is_wp_error($tac_gia)) {
+                        $tac_gia_ids = wp_list_pluck($tac_gia, 'term_id');
+                        
+                        $related_args = array(
+                            'post_type' => 'truyen_chu',
+                            'posts_per_page' => 4,
+                            'post__not_in' => array(get_the_ID()),
+                            'tax_query' => array(
+                                array(
+                                    'taxonomy' => 'tac_gia',
+                                    'field' => 'term_id',
+                                    'terms' => $tac_gia_ids
                                 )
-                            );
-                            
-                            $related_query = new WP_Query($related_args);
-                            
-                            if ($related_query->have_posts()) : ?>
-                                <div class="related-posts mt-5">
-                                    <h2 class="h3 mb-4">Truyện liên quan</h2>
-                                    <div class="row latest-chapter-container">
-                                        <?php while ($related_query->have_posts()) : $related_query->the_post(); ?>
-                                        <?php get_template_part( 'template-parts/home/item-card' ); ?>
-                                        <?php endwhile; ?>
-                                    </div>
+                            )
+                        );
+                        
+                        $related_query = new WP_Query($related_args);
+                        
+                        if ($related_query->have_posts()) : ?>
+                            <div class="related-posts mt-5">
+                                <h2 class="h3 mb-4">Truyện cùng tác giả</h2>
+                                <div class="row latest-chapter-container">
+                                    <?php while ($related_query->have_posts()) : $related_query->the_post(); ?>
+                                    <?php get_template_part( 'template-parts/home/item-card' ); ?>
+                                    <?php endwhile; ?>
                                 </div>
-                            <?php endif;
-                            wp_reset_postdata();
-                        }
+                            </div>
+                        <?php endif;
+                        wp_reset_postdata();
+                    }
                     ?>
                 </div>
                 <div class="col-lg-3">
