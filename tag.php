@@ -127,7 +127,7 @@ $(function() {
                 html += '<img src="' + (post.thumbnail ? post.thumbnail : '<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png') + '" alt="' + post.title + '" />';
                 html += '</a>';
                 html += '<div class="d-flex flex-column">';
-                html += '<span class="mx-2">' + post.title + '</span>';
+                html += '<span class="">' + post.title + '</span>';
                 if (post.author) {
                     html += '<div><small><strong>Tác giả:</strong> ' + post.author + '</small></div>';
                 }
