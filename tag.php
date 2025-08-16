@@ -19,6 +19,8 @@ $args = array(
 $custom_query = new WP_Query($args);
 $all_posts = [];
 if ($custom_query->have_posts()) {
+    // Render all posts as cards, each with a data-index attribute for JS pagination
+    $post_count = 0;
     while ($custom_query->have_posts()) {
         $custom_query->the_post();
         $all_posts[] = [
@@ -60,6 +62,20 @@ if ($custom_query->have_posts()) {
                     ?>
                 </select>
             </div>
+            <div class="the-loai-selector">
+                <select id="the-loai-select" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <?php
+                    $all_tags = get_tags([
+                        'hide_empty' => false,
+                    ]);
+                    foreach ($all_tags as $tag_item) {
+                        $selected = ($tag_item->slug === $tag->slug) ? 'selected' : '';
+                        echo '<option value="' . esc_attr($tag_item->slug) . '" ' . $selected . '>' . esc_html($tag_item->name) . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
         </header>
         <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -70,7 +86,21 @@ if ($custom_query->have_posts()) {
                     const newURL = 'https://dasactruyen.xyz/index.php/tag/' + selectedSlug + '/';
                     window.location.href = newURL;
                 }
-            });
+                <div class="row" id="tag-post-list">
+                    <?php
+                    if ($custom_query->have_posts()) {
+                        while ($custom_query->have_posts()) {
+                            $custom_query->the_post();
+                            echo '<div class="col-md-3 col-sm-6 mb-4 tag-post-card" data-index="' . $post_count . '" style="display:none;">';
+                            get_template_part('template-parts/home/item-card');
+                            echo '</div>';
+                            $post_count++;
+                        }
+                        wp_reset_postdata();
+                    } else {
+                        echo '<div class="col-12"><p>Không tìm thấy truyện nào với tag này.</p></div>';
+                    }
+                    ?>
         });
         </script>
         <style>
@@ -84,9 +114,9 @@ if ($custom_query->have_posts()) {
         </style>
         <div class="row">
             <div class="col-lg-9">
-                <div id="tag-post-list"></div>
                 <div id="tag-pagination" class="mt-3"></div>
             </div>
+    var totalItems = $(".tag-post-card").length;
             <div class="col-lg-3">
                 <?php get_template_part( 'sidebar' );  ?>
             </div>
