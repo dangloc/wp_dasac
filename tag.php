@@ -21,6 +21,7 @@ $args = array(
     ),
 );
 $custom_query = new WP_Query($args);
+$GLOBALS['wp_query'] = $custom_query; 
 ?>
 
 <main id="primary" class="site-main">
