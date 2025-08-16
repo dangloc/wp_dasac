@@ -11,7 +11,7 @@ $tag = get_queried_object();
 $args = array(
     'post_type' => 'truyen_chu',
     'posts_per_page' => 12,
-    'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
+    'paged' => max(1, get_query_var('paged')),
     'tax_query' => array(
         array(
             'taxonomy' => 'post_tag',
@@ -131,4 +131,6 @@ $GLOBALS['wp_query'] = $custom_query;
 
 <?php
 wp_reset_postdata();
+wp_reset_query();
+echo '<!-- paged: ' . get_query_var('paged') . ' -->';
 get_footer(); 
