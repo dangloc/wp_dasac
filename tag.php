@@ -122,18 +122,20 @@ $(function() {
             html = '<p>Không tìm thấy truyện nào với tag này.</p>';
         } else {
             posts.forEach(function(post) {
-                    html += '<div class="tag-post-item">';
-                    html += '<a href="' + post.permalink + '">';
-                    html += '<img src="' + (post.thumbnail ? post.thumbnail : '<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png') + '" alt="' + post.title + '" />';
-                    html += '<span class="mx-2">' + post.title + '</span>';
-                    html += '</a>';
-                    if (post.author) {
-                        html += '<div><small><strong>Tác giả:</strong> ' + post.author + '</small></div>';
-                    }
-                    if (post.tags) {
-                        html += '<div><small><strong>Tags:</strong> ' + post.tags + '</small></div>';
-                    }
-                    html += '</div>';
+                html += '<div class="tag-post-item">';
+                html += '<a href="' + post.permalink + '">';
+                html += '<img src="' + (post.thumbnail ? post.thumbnail : '<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png') + '" alt="' + post.title + '" />';
+                html += '</a>';
+                html += '<div class="d-flex flex-column">';
+                html += '<span class="mx-2">' + post.title + '</span>';
+                if (post.author) {
+                    html += '<div><small><strong>Tác giả:</strong> ' + post.author + '</small></div>';
+                }
+                if (post.tags) {
+                    html += '<div><small><strong>Tags:</strong> ' + post.tags + '</small></div>';
+                }
+                html += '</div>';
+                html += '</div>';
             });
         }
         $('#tag-post-list').html(html);
