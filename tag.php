@@ -17,7 +17,18 @@ $args = array(
     ),
 );
 $custom_query = new WP_Query($args);
-// Không cần tạo mảng $all_posts, sẽ render trực tiếp bằng PHP bên dưới
+$all_posts = [];
+if ($custom_query->have_posts()) {
+    while ($custom_query->have_posts()) {
+        $custom_query->the_post();
+        $all_posts[] = [
+            'title' => get_the_title(),
+            'permalink' => get_permalink(),
+            'thumbnail' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+        ];
+    }
+    wp_reset_postdata();
+}
 ?>
 <main id="primary" class="site-main">
     <div class="container py-4">
@@ -73,23 +84,7 @@ $custom_query = new WP_Query($args);
         </style>
         <div class="row">
             <div class="col-lg-9">
-                <div class="row" id="tag-post-list">
-                    <?php
-                    $post_count = 0;
-                    if ($custom_query->have_posts()) {
-                        while ($custom_query->have_posts()) {
-                            $custom_query->the_post();
-                            echo '<div class="tag-post-item" data-index="' . $post_count . '" style="display:none;">';
-                            get_template_part('template-parts/home/item-card');
-                            echo '</div>';
-                            $post_count++;
-                        }
-                        wp_reset_postdata();
-                    } else {
-                        echo '<div class="col-12"><p>Không tìm thấy truyện nào với tag này.</p></div>';
-                    }
-                    ?>
-                </div>
+                <div id="tag-post-list"></div>
                 <div id="tag-pagination" class="mt-3"></div>
             </div>
             <div class="col-lg-3">
@@ -102,28 +97,36 @@ $custom_query = new WP_Query($args);
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="<?php echo get_template_directory_uri(); ?>/assets/libs/paginationjs/jquery.simplePagination.js"></script>
 <script>
+var tagPosts = <?php echo json_encode($all_posts); ?>;
 $(function() {
     var itemsPerPage = 12;
-    var totalItems = $(".tag-post-item").length;
-    function showPage(page) {
+    function renderPosts(page) {
         var start = (page - 1) * itemsPerPage;
         var end = start + itemsPerPage;
-        $(".tag-post-item").hide();
-        $(".tag-post-item").each(function(idx) {
-            if (idx >= start && idx < end) {
-                $(this).show();
-            }
-        });
+        var html = '';
+        var posts = tagPosts.slice(start, end);
+        if (posts.length === 0) {
+            html = '<p>Không tìm thấy truyện nào với tag này.</p>';
+        } else {
+            posts.forEach(function(post) {
+                html += '<div class="tag-post-item">';
+                html += '<a href="' + post.permalink + '">';
+                html += '<img src="' + (post.thumbnail ? post.thumbnail : '<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png') + '" alt="' + post.title + '" />';
+                html += '<span>' + post.title + '</span>';
+                html += '</a></div>';
+            });
+        }
+        $('#tag-post-list').html(html);
     }
     $('#tag-pagination').pagination({
-        items: totalItems,
+        items: tagPosts.length,
         itemsOnPage: itemsPerPage,
         cssStyle: 'light-theme',
         onPageClick: function(pageNumber) {
-            showPage(pageNumber);
+            renderPosts(pageNumber);
         }
     });
-    showPage(1);
+    renderPosts(1);
 });
 </script>
 <?php
