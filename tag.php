@@ -20,12 +20,25 @@ $custom_query = new WP_Query($args);
 $all_posts = [];
 if ($custom_query->have_posts()) {
     while ($custom_query->have_posts()) {
-        $custom_query->the_post();
-        $all_posts[] = [
-            'title' => get_the_title(),
-            'permalink' => get_permalink(),
-            'thumbnail' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
-        ];
+            $custom_query->the_post();
+            $author = '';
+            $author_terms = get_the_terms(get_the_ID(), 'tac_gia');
+            if ($author_terms && !is_wp_error($author_terms)) {
+                $author = join(', ', wp_list_pluck($author_terms, 'name'));
+            }
+            $tags = get_the_tags();
+            $tag_list = '';
+            if ($tags) {
+                $tag_names = array_map(function($t) { return $t->name; }, $tags);
+                $tag_list = join(', ', $tag_names);
+            }
+            $all_posts[] = [
+                'title' => get_the_title(),
+                'permalink' => get_permalink(),
+                'thumbnail' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+                'author' => $author,
+                'tags' => $tag_list,
+            ];
     }
     wp_reset_postdata();
 }
@@ -109,11 +122,18 @@ $(function() {
             html = '<p>Không tìm thấy truyện nào với tag này.</p>';
         } else {
             posts.forEach(function(post) {
-                html += '<div class="tag-post-item">';
-                html += '<a href="' + post.permalink + '">';
-                html += '<img src="' + (post.thumbnail ? post.thumbnail : '<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png') + '" alt="' + post.title + '" />';
-                html += '<span>' + post.title + '</span>';
-                html += '</a></div>';
+                    html += '<div class="tag-post-item">';
+                    html += '<a href="' + post.permalink + '">';
+                    html += '<img src="' + (post.thumbnail ? post.thumbnail : '<?php echo get_template_directory_uri(); ?>/assets/images/icon-book.png') + '" alt="' + post.title + '" />';
+                    html += '<span class="mx-2">' + post.title + '</span>';
+                    html += '</a>';
+                    if (post.author) {
+                        html += '<div><small><strong>Tác giả:</strong> ' + post.author + '</small></div>';
+                    }
+                    if (post.tags) {
+                        html += '<div><small><strong>Tags:</strong> ' + post.tags + '</small></div>';
+                    }
+                    html += '</div>';
             });
         }
         $('#tag-post-list').html(html);
