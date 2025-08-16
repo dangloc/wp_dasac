@@ -2460,3 +2460,8 @@ function filter_box_full_by_the_loai_callback() {
     render_box_full($the_loai);
     wp_die();
 }
+
+function add_tags_to_truyen_chu() {
+    register_taxonomy_for_object_type('post_tag', 'truyen_chu');
+}
+add_action('init', 'add_tags_to_truyen_chu');
