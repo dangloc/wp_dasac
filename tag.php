@@ -79,7 +79,7 @@ $custom_query = new WP_Query($args);
                     if ($custom_query->have_posts()) {
                         while ($custom_query->have_posts()) {
                             $custom_query->the_post();
-                            echo '<div class="col-md-3 col-sm-6 mb-4 tag-post-item" data-index="' . $post_count . '" style="display:none;">';
+                            echo '<div class="tag-post-item" data-index="' . $post_count . '" style="display:none;">';
                             get_template_part('template-parts/home/item-card');
                             echo '</div>';
                             $post_count++;
