@@ -99,11 +99,28 @@ $prev_chapter_url = $prev_chapter > 0 ? home_url("/index.php/chuong/chuong-{$pre
 
 // *** THÊM LOGIC QUẢNG CÁO ***
 // Lấy số chương từ URL hoặc từ current_chapter_number
+
 $chapter_number = $current_chapter > 0 ? $current_chapter : $current_chapter_number;
-$show_ad = ($chapter_number > 0 && $chapter_number == 2);
 $link_qc = get_field("link_qc", 2);
 $img_qc_field = get_field("qc_img", 2);
 $img_qc = $img_qc_field ? $img_qc_field['url'] : '';
+
+// Kiểm tra VIP
+$vip_data = get_user_meta($user_id, 'vip_package', true);
+$is_vip = false;
+if ($vip_data && !empty($vip_data['is_active'])) {
+    if ($vip_data['package_type'] === 'vip_permanent') {
+        $is_vip = true;
+    } elseif ($vip_data['package_type'] === 'vip_2_months') {
+        $expiry_date = strtotime($vip_data['expiry_date']);
+        $current_date = strtotime(current_time('mysql'));
+        if ($current_date <= $expiry_date) {
+            $is_vip = true;
+        }
+    }
+}
+
+$show_ad = ($chapter_number > 0 && $chapter_number == 2 && !$is_vip);
 
 get_header();
 ?>
@@ -610,14 +627,16 @@ get_header();
                 </script>
 
                 <!-- Mobile Circular Popup -->
-                <div id="mobile-circular-popup" style="display: none;">
-                    <?php if ($img_qc && $link_qc): ?>
-                        <div class="mobile-popup-content">
-                            <img src="<?php echo esc_url($img_qc); ?>" alt="Mobile Ad" />
-                            <div class="close-icon">×</div>
-                        </div>
-                    <?php endif; ?>
-                </div>
+                                <?php if (!$is_vip): ?>
+                                <div id="mobile-circular-popup" style="display: none;">
+                                    <?php if ($img_qc && $link_qc): ?>
+                                        <div class="mobile-popup-content">
+                                            <img src="<?php echo esc_url($img_qc); ?>" alt="Mobile Ad" />
+                                            <div class="close-icon">×</div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
 
                 <style>
                     @media (max-width: 768px) {
