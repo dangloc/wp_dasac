@@ -24,7 +24,6 @@ function get_top_viewed_truyen_week($limit = 10) {
         'meta_key'       => '_weekly_view_count',
         'orderby'        => 'meta_value_num',
         'order'          => 'DESC',
-        'fields'         => 'ids',
         'meta_query'     => array(
             array(
                 'key'     => '_weekly_view_count',
@@ -34,8 +33,7 @@ function get_top_viewed_truyen_week($limit = 10) {
             ),
         ),
     );
-    $query = new WP_Query($args);
-    return $query->posts;
+    return new WP_Query($args);
 }
 
 /**
