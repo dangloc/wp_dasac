@@ -13,123 +13,67 @@
 
 	<div class="sidebar-top-rank">
 
-
 		<ul class="nav nav-pills d-flex justify-content-center mb-3" id="pills-tab" role="tablist">
 			<li class="nav-item d-flex justify-content-center w-50" role="presentation">
-				<button class="nav-link active" id="pills-week-tab" data-bs-toggle="pill" data-bs-target="#pills-week" type="button" role="tab" aria-controls="pills-week" aria-selected="true">Top View Tuần</button>
+				   <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Top View Tuần</button>
 			</li>
 			<li class="nav-item d-flex justify-content-center w-50" role="presentation">
-				<button class="nav-link" id="pills-total-tab" data-bs-toggle="pill" data-bs-target="#pills-total" type="button" role="tab" aria-controls="pills-total" aria-selected="false">Top View Tổng</button>
+				   <button class="nav-link" id="pills-view-tab" data-bs-toggle="pill" data-bs-target="#pills-view" type="button" role="tab" aria-controls="pills-view" aria-selected="false">Top View Tổng</button>
 			</li>
 		</ul>
 		<div class="tab-content" id="pills-tabContent">
-			<div class="tab-pane fade show active" id="pills-week" role="tabpanel" aria-labelledby="pills-week-tab" tabindex="0">
-				<?php
-				// Top View Tuần
-				if (function_exists('get_top_viewed_truyen_week')) {
-					$top_week = get_top_viewed_truyen_week(9);
-				} else {
-					$top_week = array();
-				}
-				if (!empty($top_week)) : ?>
-					<section class="section-table pb-2">
-						<div class="section-title"><span>Top View Tuần</span></div>
-						<div class="ranking-table">
-							<?php $rank = 1;
-							foreach ($top_week as $post_id) :
-								$post = get_post($post_id);
-								if (!$post) continue;
-							?>
-								<div class="ranking-item d-flex align-items-center" data-rank="<?php echo $rank; ?>">
-									<div class="rank-number">
-										<span class="rank-badge rank-<?php echo $rank; ?>"><?php echo $rank; ?></span>
-									</div>
-									<div class="story-info flex-grow-1">
-										<a href="<?php echo get_permalink($post_id); ?>" class="story-link">
-											<div class="story-title"><?php echo esc_html(get_the_title($post_id)); ?></div>
-											<div class="story-meta">
-												<?php
-												$the_loai = get_the_terms($post_id, 'the_loai');
-												if ($the_loai && !is_wp_error($the_loai)) : ?>
-													<small class="text-muted-custom genre-tags">
-														<?php
-														$the_loai_names = array();
-														foreach ($the_loai as $term) {
-															$the_loai_names[] = $term->name;
-														}
-														echo esc_html(implode(', ', array_slice($the_loai_names, 0, 2)));
-														?>
-													</small>
-												<?php endif; ?>
-											</div>
-										</a>
-									</div>
-									<div class="story-stats">
-										<small class="text-muted-custom view-count">
-											<i class="fas fa-eye"></i>
-											<?php echo get_post_meta($post_id, '_weekly_view_count', true) ? number_format(get_post_meta($post_id, '_weekly_view_count', true)) : 0; ?>
-										</small>
-									</div>
-								</div>
-							<?php $rank++;
-							endforeach; ?>
-						</div>
-					</section>
-				<?php else: ?>
-					<div class="section-title"><span>Không có dữ liệu tuần này.</span></div>
-				<?php endif; ?>
-			</div>
-			<div class="tab-pane fade" id="pills-total" role="tabpanel" aria-labelledby="pills-total-tab" tabindex="0">
-				<?php
-				// Top View Tổng
-				$top_total = get_top_viewed_truyen(9);
-				if (!empty($top_total)) : ?>
-					<section class="section-table pb-2">
-						<div class="section-title"><span>Top View Tổng</span></div>
-						<div class="ranking-table">
-							<?php $rank = 1;
-							foreach ($top_total as $post_id) :
-								$post = get_post($post_id);
-								if (!$post) continue;
-							?>
-								<div class="ranking-item d-flex align-items-center" data-rank="<?php echo $rank; ?>">
-									<div class="rank-number">
-										<span class="rank-badge rank-<?php echo $rank; ?>"><?php echo $rank; ?></span>
-									</div>
-									<div class="story-info flex-grow-1">
-										<a href="<?php echo get_permalink($post_id); ?>" class="story-link">
-											<div class="story-title"><?php echo esc_html(get_the_title($post_id)); ?></div>
-											<div class="story-meta">
-												<?php
-												$the_loai = get_the_terms($post_id, 'the_loai');
-												if ($the_loai && !is_wp_error($the_loai)) : ?>
-													<small class="text-muted-custom genre-tags">
-														<?php
-														$the_loai_names = array();
-														foreach ($the_loai as $term) {
-															$the_loai_names[] = $term->name;
-														}
-														echo esc_html(implode(', ', array_slice($the_loai_names, 0, 2)));
-														?>
-													</small>
-												<?php endif; ?>
-											</div>
-										</a>
-									</div>
-									<div class="story-stats">
-										<small class="text-muted-custom view-count">
-											<i class="fas fa-eye"></i>
-											<?php echo display_truyen_view_count($post_id); ?>
-										</small>
-									</div>
-								</div>
-							<?php $rank++;
-							endforeach; ?>
-						</div>
-					</section>
-				<?php else: ?>
-					<div class="section-title"><span>Không có dữ liệu tổng.</span></div>
-				<?php endif; ?>
+			   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+				   <?php if (function_exists('get_top_viewed_truyen_week')) : ?>
+					   <?php $top_week_query = get_top_viewed_truyen_week(9); ?>
+					   <?php if ($top_week_query->have_posts()) : ?>
+						   <section class="section-table pb-2">
+							   <div class="section-title"><span>Top View Tuần</span></div>
+							   <div class="ranking-table">
+								   <?php 
+								   $rank = 1;
+								   while ($top_week_query->have_posts()) : $top_week_query->the_post(); ?>
+									   <div class="ranking-item d-flex align-items-center" data-rank="<?php echo $rank; ?>">
+										   <div class="rank-number">
+											   <span class="rank-badge rank-<?php echo $rank; ?>"><?php echo $rank; ?></span>
+										   </div>
+										   <div class="story-info flex-grow-1">
+											   <a href="<?php the_permalink(); ?>" class="story-link">
+												   <div class="story-title"><?php the_title(); ?></div>
+												   <div class="story-meta">
+													   <?php
+													   $the_loai = get_the_terms(get_the_ID(), 'the_loai');
+													   if ($the_loai && !is_wp_error($the_loai)) : ?>
+														   <small class="text-muted-custom genre-tags">
+															   <?php
+															   $the_loai_names = array();
+															   foreach ($the_loai as $term) {
+																   $the_loai_names[] = $term->name;
+															   }
+															   echo esc_html(implode(', ', array_slice($the_loai_names, 0, 2)));
+															   ?>
+														   </small>
+													   <?php endif; ?>
+												   </div>
+											   </a>
+										   </div>
+										   <div class="story-stats">
+											   <small class="text-muted-custom view-count">
+												   <i class="fas fa-eye"></i>
+												   <?php echo display_truyen_view_count(get_the_ID()); ?>
+											   </small>
+										   </div>
+									   </div>
+								   <?php 
+								   $rank++;
+								   endwhile; ?>
+							   </div>
+						   </section>
+					   <?php endif; ?>
+					   <?php wp_reset_postdata(); ?>
+				   <?php endif; ?>
+			   </div>
+			<div class="tab-pane fade" id="pills-view" role="tabpanel" aria-labelledby="pills-view-tab" tabindex="0">
+				<?php display_top_viewed_truyen_sidebar(9); ?>
 			</div>
 		</div>
 		

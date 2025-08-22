@@ -13,6 +13,32 @@ if ( ! defined( '_S_VERSION' ) ) {
 }
 
 /**
+ * Lấy top truyện có lượt xem cao nhất trong tuần
+ * @param int $limit Số lượng truyện lấy
+ * @return array Mảng post_id
+ */
+function get_top_viewed_truyen_week($limit = 10) {
+    $args = array(
+        'post_type'      => 'truyen_chu',
+        'posts_per_page' => $limit,
+        'meta_key'       => '_weekly_view_count',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+        'fields'         => 'ids',
+        'meta_query'     => array(
+            array(
+                'key'     => '_weekly_view_count',
+                'value'   => '0',
+                'compare' => '>',
+                'type'    => 'NUMERIC',
+            ),
+        ),
+    );
+    $query = new WP_Query($args);
+    return $query->posts;
+}
+
+/**
  * Sets up theme defaults and registers support for various WordPress features.
  *
  * Note that this function is hooked into the after_setup_theme hook, which
@@ -2252,6 +2278,7 @@ if (!function_exists('render_table_truyen')) {
 // Chức năng đếm lượt xem cho truyen_chu
 function set_truyen_view_count($post_id) {
     if (is_single() && get_post_type($post_id) == 'truyen_chu') {
+        // Tổng view
         $count_key = 'truyen_view_count';
         $count = get_post_meta($post_id, $count_key, true);
         if ($count == '') {
@@ -2262,9 +2289,41 @@ function set_truyen_view_count($post_id) {
             $count++;
             update_post_meta($post_id, $count_key, $count);
         }
+
+        // View tuần
+        $weekly_key = '_weekly_view_count';
+        $weekly_count = get_post_meta($post_id, $weekly_key, true);
+        if ($weekly_count == '') {
+            $weekly_count = 0;
+            delete_post_meta($post_id, $weekly_key);
+            add_post_meta($post_id, $weekly_key, '0');
+        }
+        $weekly_count++;
+        update_post_meta($post_id, $weekly_key, $weekly_count);
     }
 }
 add_action('wp_head', 'set_truyen_view_count');
+
+// Hàm reset lượt xem tuần cho tất cả truyện
+function reset_weekly_view_count() {
+    $args = array(
+        'post_type' => 'truyen_chu',
+        'posts_per_page' => -1,
+        'fields' => 'ids'
+    );
+    $query = new WP_Query($args);
+    if ($query->have_posts()) {
+        foreach ($query->posts as $post_id) {
+            update_post_meta($post_id, '_weekly_view_count', 0);
+        }
+    }
+}
+
+// Lên lịch reset vào mỗi thứ 2 hàng tuần
+if (!wp_next_scheduled('reset_weekly_view_count_event')) {
+    wp_schedule_event(strtotime('next monday'), 'weekly', 'reset_weekly_view_count_event');
+}
+add_action('reset_weekly_view_count_event', 'reset_weekly_view_count');
 
 // Lấy lượt xem của truyện
 function get_truyen_view_count($post_id) {
