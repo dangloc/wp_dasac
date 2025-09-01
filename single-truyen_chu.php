@@ -165,7 +165,21 @@ if (have_posts()) {
                             <?php if ($first_chapter): ?>
                                 <a href="<?php echo get_permalink($first_chapter->ID); ?>" class="btn btn-warning">Đọc Từ Đầu</a>
                             <?php endif; ?>
-                            <?php if ($last_chapter): ?>
+                            <?php 
+                            // Check if user is logged in and has reading history for this story
+                            $current_user_id = get_current_user_id();
+                            $last_read_chapter = null;
+                            
+                            if ($current_user_id) {
+                                $last_read_chapter = get_last_read_chapter_for_story($current_user_id, get_the_ID());
+                            }
+                            
+                            if ($last_read_chapter): ?>
+                                <a href="<?php echo get_permalink($last_read_chapter->chapter_id); ?>" 
+                                   class="btn btn-warning">
+                                    Đọc tiếp chương <?php echo $last_read_chapter->chapter_number; ?>
+                                </a>
+                            <?php elseif ($last_chapter): ?>
                                 <a href="<?php echo $is_last_chapter_locked ? 'javascript:void(0)' : get_permalink($last_chapter->ID); ?>" 
                                    class="btn btn-warning <?php echo $is_last_chapter_locked ? 'disabled' : ''; ?>"
                                    <?php echo $is_last_chapter_locked ? 'title="Chương này đã bị khóa"' : ''; ?>>

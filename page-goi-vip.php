@@ -49,35 +49,8 @@ if ($vip_data && $vip_data['is_active']) {
         </div>
 
         <div class="row justify-content-center g-4">
-            <!-- Gói VIP 2 Tháng -->
-            <div class="col-lg-5 col-md-6">
-                <div class="pricing-card pricing-card-popular h-100">
-                    <div class="popular-badge">Phổ Biến</div>
-                    <div class="card-body mt-3">
-                        <h5 class="card-title">VIP 2 THÁNG</h5>
-                        <h1 class="card-price">350,000<small class="price-currency"> kim tệ</small></h1>
-                        <p class="price-duration">/ 2 Tháng</p>
-                        
-                        <ul class="list-unstyled feature-list">
-                            <li><i class="fas fa-book-open-reader me-2"></i> Đọc truyện không giới hạn 2 tháng</li>
-                            <li><i class="fas fa-crown me-2"></i> Danh hiệu VIP Tạm thời</li>
-                        </ul>
-
-                        <?php if ($current_vip_status['vip_2_months']): ?>
-                            <button class="btn btn-vip-purchased w-100 mt-4" disabled>
-                                <i class="fas fa-check-circle me-2"></i> Đã Kích Hoạt
-                            </button>
-                        <?php else: ?>
-                            <button class="btn btn-vip btn-vip-popular w-100 mt-4 buy-vip" data-package="vip_2_months">
-                               Kích Hoạt Ngay
-                            </button>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
             <!-- Gói VIP Vĩnh Viễn -->
-            <div class="col-lg-5 col-md-6">
+            <div class="col-lg-6 col-md-8">
                 <div class="pricing-card pricing-card-permanent h-100">
                      <div class="corner-ribbon"><span>Tối ưu nhất</span></div>
                     <div class="card-body mt-3">

@@ -59,7 +59,7 @@
 										   <div class="story-stats">
 											   <small class="text-muted-custom view-count">
 												   <i class="fas fa-eye"></i>
-												   <?php echo display_truyen_view_count(get_the_ID()); ?>
+												   <?php echo display_truyen_weekly_view_count(get_the_ID()); ?>
 											   </small>
 										   </div>
 									   </div>

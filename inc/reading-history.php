@@ -111,6 +111,23 @@ function get_user_reading_history_count($user_id) {
     ));
 }
 
+// Get last read chapter for a specific story
+function get_last_read_chapter_for_story($user_id, $story_id) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'reading_history';
+    
+    return $wpdb->get_row($wpdb->prepare(
+        "SELECT rh.*, c.post_title as chapter_title, c.post_name as chapter_slug
+        FROM $table_name rh 
+        JOIN {$wpdb->posts} c ON rh.chapter_id = c.ID
+        WHERE rh.user_id = %d AND rh.story_id = %d
+        ORDER BY rh.last_read DESC 
+        LIMIT 1",
+        $user_id,
+        $story_id
+    ));
+}
+
 // Delete reading history item
 function delete_reading_history_item($history_id, $user_id) {
     global $wpdb;

@@ -2333,11 +2333,28 @@ function get_truyen_view_count($post_id) {
         return "0";
     }
     return $count;
-}
+} 
 
 // Hiển thị lượt xem
 function display_truyen_view_count($post_id) {
     $count = get_truyen_view_count($post_id);
+    return number_format($count);
+}
+
+// Lấy lượt xem tuần
+function get_truyen_weekly_view_count($post_id) {
+    $count = get_post_meta($post_id, '_weekly_view_count', true);
+    if ($count == '') {
+        delete_post_meta($post_id, '_weekly_view_count');
+        add_post_meta($post_id, '_weekly_view_count', '0');
+        return "0";
+    }
+    return $count;
+}
+
+// Hiển thị lượt xem tuần
+function display_truyen_weekly_view_count($post_id) {
+    $count = get_truyen_weekly_view_count($post_id);
     return number_format($count);
 }
 
