@@ -167,26 +167,43 @@ get_header();
                 </div>
 
                 <!-- Floating Sidebar -->
-                <div id="floating-sidebar">
-                    <button class="sidebar-btn" id="menu-btn" title="Menu">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <button class="sidebar-btn" id="scroll-down-btn" title="Cuộn xuống">
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
-                    <button class="sidebar-btn" id="settings-btn" title="Cài đặt">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <button class="sidebar-btn" id="bookmark-btn" title="Đánh dấu">
-                        <i class="fas fa-bookmark"></i>
-                    </button>
-
-                    <button class="sidebar-btn" id="scroll-up-btn" title="Cuộn lên">
-                        <i class="fas fa-chevron-up"></i>
-                    </button>
-                    <button class="sidebar-btn" id="fullscreen-btn" title="Toàn màn hình">
-                        <i class="fas fa-expand"></i>
-                    </button>
+                <div id="floating-sidebar" class="floating-menu">
+                    <input type="checkbox" id="floating-toggle">
+                    <span class="plus-icon" aria-hidden="true">
+                        <span class="fa fa-plus" aria-hidden="true"></span>
+                    </span>
+                    <ul class="floating-nav">
+                        <li>
+                            <button class="sidebar-btn" id="menu-btn" title="Menu">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-btn" id="scroll-down-btn" title="Cuộn xuống">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-btn" id="settings-btn" title="Cài đặt">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-btn" id="bookmark-btn" title="Đánh dấu">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-btn" id="scroll-up-btn" title="Cuộn lên">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="sidebar-btn" id="fullscreen-btn" title="Toàn màn hình">
+                                <i class="fas fa-expand"></i>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Settings Modal -->
@@ -255,38 +272,99 @@ get_header();
                 </div>
 
                 <style>
-                /* Floating Sidebar */
-                #floating-sidebar {
+                /* Floating Sidebar - Checkbox based expanding menu */
+                #floating-sidebar.floating-menu {
+                    width:40px;
+                    height:40px;
+                    border-radius: 50%;
+                    background: orange;
                     position: fixed;
-                    right: 20px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
+                    bottom: 35px;
+                    right: 5px;
                     z-index: 1000;
                 }
 
-                .sidebar-btn {
-                    width: 50px;
-                    height: 50px;
+                #floating-sidebar input {
+                    position: absolute;
+                    width: 40px;
+                    height: 40px;
+                    margin: 0;
+                    opacity: 0;
+                    cursor: pointer;
+                    z-index: 2;
+                }
+
+                #floating-sidebar .plus-icon {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 24px;
+                    line-height: 1;
+                    color: #ffffff;
+                    background: orange;
+                    border-radius: 50%;
+                    transform: rotate(0);
+                    transition: all 0.5s ease;
+                    pointer-events: none;
+                    position: absolute;
+                    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.2);
+                    z-index: 1;
+                }
+
+                #floating-sidebar .floating-nav {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 0;
+                    margin: 0;
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    z-index: 0;
+                    list-style: none;
+                }
+
+                #floating-sidebar .floating-nav li {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 35px;
+                    height: 35px;
+                    border-radius: 50%;
+                    background: orange;
+                    cursor: pointer;
+                    position: absolute;
+                    transition: all 0.5s ease;
+                    transform: translateY(0);
+                }
+
+                #floating-sidebar .floating-nav li .sidebar-btn {
+                    width: 40px;
+                    height: 40px;
                     border: none;
-                    border-radius: 8px;
-                    background: #333;
-                    color: white;
+                    background: transparent;
+                    color: #ffffff;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    font-size: 18px;
-                    transition: all 0.3s ease;
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                    font-size: 14px;
+                    padding: 0;
                 }
 
-                .sidebar-btn:hover {
-                    background: #555;
-                    transform: scale(1.1);
+                #floating-sidebar input:checked ~ .plus-icon {
+                    transform: rotate(135deg);
                 }
+
+                #floating-sidebar input:checked ~ .floating-nav li:nth-child(1) { transform: translateY(-48px); }
+                #floating-sidebar input:checked ~ .floating-nav li:nth-child(2) { transform: translateY(-88px); }
+                #floating-sidebar input:checked ~ .floating-nav li:nth-child(3) { transform: translateY(-128px); }
+                #floating-sidebar input:checked ~ .floating-nav li:nth-child(4) { transform: translateY(-168px); }
+                #floating-sidebar input:checked ~ .floating-nav li:nth-child(5) { transform: translateY(-208px); }
+                #floating-sidebar input:checked ~ .floating-nav li:nth-child(6) { transform: translateY(-248px); }
 
                 /* Settings Modal */
                 .modal {
