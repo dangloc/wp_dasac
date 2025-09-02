@@ -170,7 +170,7 @@ get_header();
                 <div id="floating-sidebar" class="floating-menu">
                     <input type="checkbox" id="floating-toggle">
                     <span class="plus-icon" aria-hidden="true">
-                        <span class="fa fa-plus" aria-hidden="true"></span>
+                        <span class="fas fa-cog" aria-hidden="true"></span>
                     </span>
                     <ul class="floating-nav">
                         <li>
