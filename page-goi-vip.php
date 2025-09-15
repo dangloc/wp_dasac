@@ -60,7 +60,7 @@ if ($vip_data && $vip_data['is_active']) {
 
          <!-- Gói VIP 30 Ngày -->
             <div class="col-lg-4 col-md-6">
-                <div class="pricing-card pricing-card-popular h-100">
+                <div class="pricing-card pricing-card-basic h-100">
                     <div class="popular-badge">Phổ Biến</div>
                     <div class="card-body mt-3">
                         <h5 class="card-title">VIP 30 NGÀY</h5>
@@ -69,7 +69,7 @@ if ($vip_data && $vip_data['is_active']) {
                         
                         <ul class="list-unstyled feature-list">
                             <li><i class="fas fa-book-open-reader me-2"></i> Đọc truyện không giới hạn 30 ngày</li>
-                            <li><i class="fas fa-crown me-2"></i> Danh hiệu VIP Tạm thời</li>
+                            <li><i class="fas fa-ban me-2"></i> Không bao gồm danh hiệu VIP</li>
                         </ul>
 
                         <?php if ($current_vip_status['vip_30_days']): ?>
@@ -143,6 +143,27 @@ if ($vip_data && $vip_data['is_active']) {
         </div>
     </div>
 </div>
+
+<style>
+/* Style differentiation: basic vs popular */
+.pricing-card-basic {
+    border: 1px solid #e9ecef;
+    background: #ffffff;
+    box-shadow: none;
+}
+.pricing-card-basic .popular-badge { display: none; }
+.pricing-card-basic .card-title { color: #495057; }
+.pricing-card-basic .card-price { color: #343a40; font-weight: 700; }
+.pricing-card-basic .feature-list li { color: #6c757d; }
+.pricing-card-basic .btn-vip { background: #6c757d; border-color: #6c757d; }
+.pricing-card-basic .btn-vip:hover { filter: brightness(0.95); }
+
+/* Keep popular (60-day) more highlighted if needed */
+.pricing-card-popular {
+    box-shadow: 0 10px 25px rgba(252, 163, 17, 0.25);
+    border: 1px solid rgba(252, 163, 17, 0.35);
+}
+</style>
 
 <script>
 jQuery(document).ready(function($) {
