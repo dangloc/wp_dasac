@@ -1489,9 +1489,12 @@ function process_vip_purchase_handler() {
     $package_duration = 0;
 
     // Xác định thông tin gói
-    if ($package_type === 'vip_3_months') {
-        $package_price = 350000;
-        $package_duration = 2; // 2 tháng
+    if ($package_type === 'vip_2_months') { // 30 ngày
+        $package_price = 299000;
+        $package_duration = 30; // 30 ngày
+    } elseif ($package_type === 'vip_3_months') { // 60 ngày
+        $package_price = 599000;
+        $package_duration = 60; // 60 ngày
     } elseif ($package_type === 'vip_permanent') {
         $package_price = 999999;
         $package_duration = -1; // -1 đại diện cho vĩnh viễn
@@ -1514,7 +1517,7 @@ function process_vip_purchase_handler() {
     $vip_data = array(
         'package_type' => $package_type,
         'purchase_date' => current_time('mysql'),
-        'expiry_date' => $package_duration === -1 ? 'permanent' : date('Y-m-d H:i:s', strtotime("+{$package_duration} months")),
+        'expiry_date' => $package_duration === -1 ? 'permanent' : date('Y-m-d H:i:s', strtotime("+{$package_duration} days")),
         'is_active' => true
     );
 
@@ -1541,8 +1544,8 @@ function check_user_vip_status($user_id) {
         return true;
     }
 
-    // Kiểm tra hết hạn cho gói 3 tháng
-    if ($vip_data['package_type'] === 'vip_3_months') {
+    // Kiểm tra hết hạn cho gói 30 ngày và 60 ngày
+    if ($vip_data['package_type'] === 'vip_2_months' || $vip_data['package_type'] === 'vip_3_months') {
         $expiry_date = strtotime($vip_data['expiry_date']);
         $current_date = strtotime(current_time('mysql'));
         return $current_date <= $expiry_date;

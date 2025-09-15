@@ -122,6 +122,11 @@ if ($vip_data && !empty($vip_data['is_active'])) {
 
 $show_ad = ($chapter_number > 0 && $chapter_number == 2 && !$is_vip);
 
+// Tăng lượt view cho truyện cha khi vào chương
+if ($truyen_id) {
+    set_truyen_view_count($truyen_id);
+}
+
 get_header();
 ?>
 

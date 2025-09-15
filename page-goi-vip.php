@@ -19,19 +19,27 @@ $user_balance = floatval($user_balance);
 // Lấy thông tin gói VIP hiện tại
 $vip_data = get_user_meta($current_user->ID, 'vip_package', true);
 $current_vip_status = array(
-    'vip_2_months' => false, // Đổi tên để khớp với code mới
+    'vip_30_days' => false,
+    'vip_60_days' => false,
     'vip_permanent' => false
 );
 
 if ($vip_data && $vip_data['is_active']) {
     if ($vip_data['package_type'] === 'vip_permanent') {
         $current_vip_status['vip_permanent'] = true;
-    } else if ($vip_data['package_type'] === 'vip_2_months') { // Đổi tên để khớp
+    } else if ($vip_data['package_type'] === 'vip_2_months') { // 30 ngày
         // Kiểm tra hết hạn
         $expiry_date = strtotime($vip_data['expiry_date']);
         $current_date = strtotime(current_time('mysql'));
         if ($current_date <= $expiry_date) {
-            $current_vip_status['vip_2_months'] = true;
+            $current_vip_status['vip_30_days'] = true;
+        }
+    } else if ($vip_data['package_type'] === 'vip_3_months') { // 60 ngày
+        // Kiểm tra hết hạn
+        $expiry_date = strtotime($vip_data['expiry_date']);
+        $current_date = strtotime(current_time('mysql'));
+        if ($current_date <= $expiry_date) {
+            $current_vip_status['vip_60_days'] = true;
         }
     }
 }
@@ -49,8 +57,63 @@ if ($vip_data && $vip_data['is_active']) {
         </div>
 
         <div class="row justify-content-center g-4">
+
+         <!-- Gói VIP 30 Ngày -->
+            <div class="col-lg-4 col-md-6">
+                <div class="pricing-card pricing-card-popular h-100">
+                    <div class="popular-badge">Phổ Biến</div>
+                    <div class="card-body mt-3">
+                        <h5 class="card-title">VIP 30 NGÀY</h5>
+                        <h1 class="card-price">299,000<small class="price-currency"> kim tệ</small></h1>
+                        <p class="price-duration">/ 30 Ngày</p>
+                        
+                        <ul class="list-unstyled feature-list">
+                            <li><i class="fas fa-book-open-reader me-2"></i> Đọc truyện không giới hạn 30 ngày</li>
+                            <li><i class="fas fa-crown me-2"></i> Danh hiệu VIP Tạm thời</li>
+                        </ul>
+
+                        <?php if ($current_vip_status['vip_30_days']): ?>
+                            <button class="btn btn-vip-purchased w-100 mt-4" disabled>
+                                <i class="fas fa-check-circle me-2"></i> Đã Kích Hoạt
+                            </button>
+                        <?php else: ?>
+                            <button class="btn btn-vip btn-vip-popular w-100 mt-4 buy-vip" data-package="vip_30_days">
+                               Kích Hoạt Ngay
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Gói VIP 60 Ngày -->
+            <div class="col-lg-4 col-md-6">
+                <div class="pricing-card pricing-card-popular h-100">
+                    <div class="popular-badge">Phổ Biến</div>
+                    <div class="card-body mt-3">
+                        <h5 class="card-title">VIP 60 NGÀY</h5>
+                        <h1 class="card-price">599,000<small class="price-currency"> kim tệ</small></h1>
+                        <p class="price-duration">/ 60 Ngày</p>
+                        
+                        <ul class="list-unstyled feature-list">
+                            <li><i class="fas fa-book-open-reader me-2"></i> Đọc truyện không giới hạn 60 ngày</li>
+                            <li><i class="fas fa-crown me-2"></i> Danh hiệu VIP Tạm thời</li>
+                        </ul>
+
+                        <?php if ($current_vip_status['vip_60_days']): ?>
+                            <button class="btn btn-vip-purchased w-100 mt-4" disabled>
+                                <i class="fas fa-check-circle me-2"></i> Đã Kích Hoạt
+                            </button>
+                        <?php else: ?>
+                            <button class="btn btn-vip btn-vip-popular w-100 mt-4 buy-vip" data-package="vip_60_days">
+                               Kích Hoạt Ngay
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Gói VIP Vĩnh Viễn -->
-            <div class="col-lg-6 col-md-8">
+            <div class="col-lg-4 col-md-6">
                 <div class="pricing-card pricing-card-permanent h-100">
                      <div class="corner-ribbon"><span>Tối ưu nhất</span></div>
                     <div class="card-body mt-3">
@@ -87,7 +150,9 @@ jQuery(document).ready(function($) {
         // Giữ nguyên phần JS của bạn vì nó đã xử lý logic tốt
         const packageType = $(this).data('package');
         // đổi tên package trong data gửi đi
-        if (packageType === 'vip_2_months') {
+        if (packageType === 'vip_30_days') {
+            package_type_to_send = 'vip_2_months'; // Gửi đi tên cũ để tương thích backend
+        } else if (packageType === 'vip_60_days') {
             package_type_to_send = 'vip_3_months'; // Gửi đi tên cũ để tương thích backend
         } else {
             package_type_to_send = packageType;
