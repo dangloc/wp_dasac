@@ -1671,7 +1671,8 @@ function add_vip_fields_to_user_profile($user) {
             <th><label for="vip_package_type">Loại gói VIP</label></th>
             <td>
                 <select name="vip_package_type" id="vip_package_type">
-                    <option value="vip_3_months" <?php selected($package_type, 'vip_3_months'); ?>>VIP 3 tháng</option>
+                    <option value="vip_2_months" <?php selected($package_type, 'vip_2_months'); ?>>VIP 2 tháng (30 ngày)</option>
+                    <option value="vip_3_months" <?php selected($package_type, 'vip_3_months'); ?>>VIP 3 tháng (60 ngày)</option>
                     <option value="vip_permanent" <?php selected($package_type, 'vip_permanent'); ?>>VIP vĩnh viễn</option>
                 </select>
             </td>
@@ -1722,8 +1723,10 @@ function save_vip_fields($user_id) {
         // Set ngày hết hạn
         if ($package_type === 'vip_permanent') {
             $vip_data['expiry_date'] = 'permanent';
-        } else {
-            $vip_data['expiry_date'] = date('Y-m-d H:i:s', strtotime('+3 months'));
+        } elseif ($package_type === 'vip_2_months') {
+            $vip_data['expiry_date'] = date('Y-m-d H:i:s', strtotime('+30 days'));
+        } elseif ($package_type === 'vip_3_months') {
+            $vip_data['expiry_date'] = date('Y-m-d H:i:s', strtotime('+60 days'));
         }
     } else {
         // Nếu bỏ VIP
