@@ -188,6 +188,11 @@ get_header();
                                 <i class="fas fa-chevron-down"></i>
                             </button>
                         </li>
+                         <li>
+                            <button class="sidebar-btn" id="tts-btn" title="Đọc truyện">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                        </li>
                         <li>
                             <button class="sidebar-btn" id="settings-btn" title="Cài đặt">
                                 <i class="fas fa-cog"></i>
@@ -537,6 +542,79 @@ get_header();
                         lineHeight: 2.3,
                         maxWidth: 900
                     };
+
+                    if ('speechSynthesis' in window) {
+    const ttsButton = $('#tts-btn');
+    const ttsIcon = ttsButton.find('i');
+
+    // Hàm để bắt đầu đọc
+    function startReading() {
+        // Lấy toàn bộ văn bản từ nội dung chương truyện
+        // Dùng .text() để loại bỏ các thẻ HTML
+        const textToSpeak = $('#reader-content').text();
+
+        if (textToSpeak.trim().length === 0) {
+            alert('Không có nội dung để đọc.');
+            return;
+        }
+
+        // Tạo một đối tượng phát âm
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+        // Cố gắng tìm và chọn giọng đọc tiếng Việt
+        const voices = window.speechSynthesis.getVoices();
+        utterance.voice = voices.find(voice => voice.lang === 'vi-VN');
+        
+        // Thiết lập ngôn ngữ để đảm bảo phát âm đúng
+        utterance.lang = 'vi-VN';
+
+        // Sự kiện khi bắt đầu đọc
+        utterance.onstart = function() {
+            ttsIcon.removeClass('fa-volume-up').addClass('fa-stop-circle');
+            ttsButton.attr('title', 'Dừng đọc');
+        };
+
+        // Sự kiện khi đọc xong
+        utterance.onend = function() {
+            ttsIcon.removeClass('fa-stop-circle').addClass('fa-volume-up');
+            ttsButton.attr('title', 'Đọc truyện');
+        };
+
+        // Bắt đầu đọc
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Hàm để dừng đọc
+    function stopReading() {
+        window.speechSynthesis.cancel();
+        ttsIcon.removeClass('fa-stop-circle').addClass('fa-volume-up');
+        ttsButton.attr('title', 'Đọc truyện');
+    }
+
+    // Gán sự kiện click cho nút
+    ttsButton.on('click', function() {
+        // Nếu đang đọc thì dừng lại
+        if (window.speechSynthesis.speaking) {
+            stopReading();
+        } else {
+            // Nếu không thì bắt đầu đọc
+            startReading();
+        }
+    });
+
+    // Tự động dừng đọc khi người dùng rời khỏi trang
+    $(window).on('beforeunload', function() {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+        }
+    });
+
+} else {
+    // Ẩn nút nếu trình duyệt không hỗ trợ
+    $('#tts-btn').parent().hide();
+    console.log('Trình duyệt của bạn không hỗ trợ Text-to-Speech.');
+}
+
 
                     // Load settings from localStorage
                     const savedSettings = localStorage.getItem('readerSettings');
