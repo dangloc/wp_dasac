@@ -531,7 +531,7 @@ get_header();
                     }
                 }
                 </style>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                 <script>
                 jQuery(document).ready(function($) {
                     // Reader settings
@@ -544,76 +544,157 @@ get_header();
                     };
 
                     if ('speechSynthesis' in window) {
-    const ttsButton = $('#tts-btn');
-    const ttsIcon = ttsButton.find('i');
+                        // Khai báo các biến giao diện cần dùng
+                        const ttsButton = jQuery('#tts-btn');
+                        const ttsIcon = ttsButton.find('i');
+                        
+                        // Biến toàn cục để lưu trữ các giọng đọc tiếng Việt tìm thấy
+                        let vietnameseVoices = [];
 
-    // Hàm để bắt đầu đọc
-    function startReading() {
-        // Lấy toàn bộ văn bản từ nội dung chương truyện
-        // Dùng .text() để loại bỏ các thẻ HTML
-        const textToSpeak = $('#reader-content').text();
+                        /**
+                         * Tải và lọc danh sách giọng đọc của trình duyệt, chỉ giữ lại tiếng Việt.
+                         * Hàm này rất quan trọng vì danh sách giọng đọc được tải bất đồng bộ.
+                         */
+                        function loadAndFilterVietnameseVoices() {
+                            const allVoices = window.speechSynthesis.getVoices();
+                            vietnameseVoices = allVoices.filter(voice => voice.lang === 'vi-VN');
+                            // Bạn có thể mở console để xem danh sách giọng đọc tìm thấy
+                            // console.log('Các giọng đọc tiếng Việt có sẵn:', vietnameseVoices);
+                        }
 
-        if (textToSpeak.trim().length === 0) {
-            alert('Không có nội dung để đọc.');
-            return;
-        }
+                        // Gọi hàm lần đầu tiên, phòng trường hợp trình duyệt đã tải sẵn
+                        loadAndFilterVietnameseVoices();
 
-        // Tạo một đối tượng phát âm
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                        // Gán hàm vào sự kiện onvoiceschanged để đảm bảo luôn có danh sách mới nhất
+                        // Đây là cách làm chuẩn để xử lý việc tải giọng đọc bất đồng bộ
+                        if (speechSynthesis.onvoiceschanged !== undefined) {
+                            speechSynthesis.onvoiceschanged = loadAndFilterVietnameseVoices;
+                        }
 
-        // Cố gắng tìm và chọn giọng đọc tiếng Việt
-        const voices = window.speechSynthesis.getVoices();
-        utterance.voice = voices.find(voice => voice.lang === 'vi-VN');
-        
-        // Thiết lập ngôn ngữ để đảm bảo phát âm đúng
-        utterance.lang = 'vi-VN';
+                        /**
+                         * Bắt đầu quá trình đọc văn bản với giọng đọc đã được chọn.
+                         * @param {number|null} voiceIndex - Chỉ số của giọng đọc trong mảng vietnameseVoices.
+                         */
+                        function startReading(voiceIndex) {
+                            const textToSpeak = jQuery('#reader-content').text();
 
-        // Sự kiện khi bắt đầu đọc
-        utterance.onstart = function() {
-            ttsIcon.removeClass('fa-volume-up').addClass('fa-stop-circle');
-            ttsButton.attr('title', 'Dừng đọc');
-        };
+                            if (textToSpeak.trim().length === 0) {
+                                Swal.fire('Lỗi!', 'Không có nội dung để đọc.', 'error');
+                                return;
+                            }
 
-        // Sự kiện khi đọc xong
-        utterance.onend = function() {
-            ttsIcon.removeClass('fa-stop-circle').addClass('fa-volume-up');
-            ttsButton.attr('title', 'Đọc truyện');
-        };
+                            // Luôn dừng các tiến trình đọc cũ trước khi bắt đầu một tiến trình mới
+                            window.speechSynthesis.cancel(); 
 
-        // Bắt đầu đọc
-        window.speechSynthesis.speak(utterance);
-    }
+                            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                            
+                            // Gán giọng đọc đã được người dùng chọn từ popup
+                            if (voiceIndex !== null && vietnameseVoices[voiceIndex]) {
+                                utterance.voice = vietnameseVoices[voiceIndex];
+                            }
+                            
+                            // Thiết lập ngôn ngữ để đảm bảo phát âm đúng
+                            utterance.lang = 'vi-VN';
 
-    // Hàm để dừng đọc
-    function stopReading() {
-        window.speechSynthesis.cancel();
-        ttsIcon.removeClass('fa-stop-circle').addClass('fa-volume-up');
-        ttsButton.attr('title', 'Đọc truyện');
-    }
+                            // Xử lý sự kiện khi bắt đầu đọc: đổi icon nút bấm
+                            utterance.onstart = () => {
+                                ttsIcon.removeClass('fa-volume-up').addClass('fa-stop-circle');
+                                ttsButton.attr('title', 'Dừng đọc');
+                            };
 
-    // Gán sự kiện click cho nút
-    ttsButton.on('click', function() {
-        // Nếu đang đọc thì dừng lại
-        if (window.speechSynthesis.speaking) {
-            stopReading();
-        } else {
-            // Nếu không thì bắt đầu đọc
-            startReading();
-        }
-    });
+                            // Xử lý sự kiện khi đọc xong: gọi hàm stopReading để reset giao diện
+                            utterance.onend = () => {
+                                stopReading();
+                            };
 
-    // Tự động dừng đọc khi người dùng rời khỏi trang
-    $(window).on('beforeunload', function() {
-        if (window.speechSynthesis.speaking) {
-            window.speechSynthesis.cancel();
-        }
-    });
+                            // Bắt đầu đọc
+                            window.speechSynthesis.speak(utterance);
+                        }
 
-} else {
-    // Ẩn nút nếu trình duyệt không hỗ trợ
-    $('#tts-btn').parent().hide();
-    console.log('Trình duyệt của bạn không hỗ trợ Text-to-Speech.');
-}
+                        /**
+                         * Dừng quá trình đọc và reset giao diện nút bấm về trạng thái ban đầu.
+                         */
+                        function stopReading() {
+                            window.speechSynthesis.cancel();
+                            ttsIcon.removeClass('fa-stop-circle').addClass('fa-volume-up');
+                            ttsButton.attr('title', 'Đọc truyện');
+                        }
+
+                        // === GÁN SỰ KIỆN CHÍNH CHO NÚT BẤM ===
+                        ttsButton.on('click', function() {
+                            // Trường hợp 1: Audio đang được phát -> Mở popup xác nhận dừng
+                            if (window.speechSynthesis.speaking) {
+                                Swal.fire({
+                                    title: 'Bạn chắc chắn muốn dừng?',
+                                    text: "Quá trình đọc sẽ kết thúc.",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Vâng, dừng lại!',
+                                    cancelButtonText: 'Hủy'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        stopReading();
+                                    }
+                                });
+                                return; // Kết thúc hàm tại đây
+                            }
+                            
+                            // Trường hợp 2: Bắt đầu đọc -> Mở popup chọn giọng
+                            // Cập nhật lại danh sách giọng đọc một lần nữa để đảm bảo tính chính xác
+                            loadAndFilterVietnameseVoices(); 
+                            
+                            if (vietnameseVoices.length === 0) {
+                                Swal.fire({
+                                    title: 'Không tìm thấy giọng đọc',
+                                    text: 'Trình duyệt của bạn chưa tải xong danh sách giọng đọc hoặc không hỗ trợ tiếng Việt. Vui lòng thử lại sau giây lát.',
+                                    icon: 'info'
+                                });
+                                return;
+                            }
+
+                            // Tự động tạo HTML cho các lựa chọn giọng đọc
+                            let voiceOptionsHtml = '';
+                            vietnameseVoices.forEach((voice, index) => {
+                                voiceOptionsHtml += `
+                                    <label style="display: block; margin: 10px 0; cursor: pointer; font-size: 16px;">
+                                        <input type="radio" name="voice-selection" value="${index}" style="margin-right: 10px;" ${index === 0 ? 'checked' : ''}>
+                                        <span>${voice.name}</span>
+                                    </label>
+                                `;
+                            });
+
+                            // Hiển thị popup SweetAlert2 với các lựa chọn
+                            Swal.fire({
+                                title: 'Chọn giọng đọc',
+                                html: `<div style="text-align: left; padding: 0 1em;">${voiceOptionsHtml}</div>`,
+                                confirmButtonText: 'Bắt đầu đọc',
+                                showCancelButton: true,
+                                cancelButtonText: 'Hủy',
+                                preConfirm: () => {
+                                    const selected = document.querySelector('input[name="voice-selection"]:checked');
+                                    return selected ? selected.value : null;
+                                }
+                            }).then((result) => {
+                                // Nếu người dùng xác nhận và đã chọn giọng đọc
+                                if (result.isConfirmed && result.value !== null) {
+                                    startReading(parseInt(result.value, 10));
+                                }
+                            });
+                        });
+
+                        // Xử lý khi người dùng rời khỏi trang để tránh audio bị treo
+                        jQuery(window).on('beforeunload', () => {
+                            if (window.speechSynthesis.speaking) {
+                                window.speechSynthesis.cancel();
+                            }
+                        });
+
+                    } else {
+                        // Ẩn nút TTS nếu trình duyệt không hỗ trợ API
+                        jQuery('#tts-btn').parent().hide();
+                        console.log('Trình duyệt không hỗ trợ Web Speech API (speechSynthesis).');
+                    }
+
 
 
                     // Load settings from localStorage
