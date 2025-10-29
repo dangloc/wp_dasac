@@ -257,7 +257,7 @@
 						<hr class="flex-grow-1">
 					</div>
 					<div class="d-grid">
-						<a class="btn btn-outline-secondary" href="https://dasactruyen.xyz/wp-login.php?loginSocial=google" data-plugin="nsl" data-action="connect" data-redirect="current" data-provider="google" data-popupwidth="600" data-popupheight="600">
+						<a class="btn btn-outline-secondary" href="https://dasactruyen.com/wp-login.php?loginSocial=google" data-plugin="nsl" data-action="connect" data-redirect="current" data-provider="google" data-popupwidth="600" data-popupheight="600">
 							<img style="width: 20px; height: 20px; margin-right: 8px;" src="<?php bloginfo('template_url'); ?>/assets/images/google.svg" alt="Google">
 							Đăng nhập bằng Google
 						</a>
@@ -331,7 +331,7 @@
 						<hr class="flex-grow-1">
 					</div>
 					<div class="d-grid">
-						<a class="btn btn-outline-secondary" href="https://dasactruyen.xyz/wp-login.php?loginSocial=google" data-plugin="nsl" data-action="connect" data-redirect="current" data-provider="google" data-popupwidth="600" data-popupheight="600">
+						<a class="btn btn-outline-secondary" href="https://dasactruyen.com/wp-login.php?loginSocial=google" data-plugin="nsl" data-action="connect" data-redirect="current" data-provider="google" data-popupwidth="600" data-popupheight="600">
 							<img style="width: 20px; height: 20px; margin-right: 8px;" src="<?php bloginfo('template_url'); ?>/assets/images/google.svg" alt="Google">
 							Đăng nhập bằng Google
 						</a>
