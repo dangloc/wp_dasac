@@ -99,28 +99,16 @@ $prev_chapter_url = $prev_chapter > 0 ? home_url("/index.php/chuong/chuong-{$pre
 
 // *** THÊM LOGIC QUẢNG CÁO ***
 // Lấy số chương từ URL hoặc từ current_chapter_number
-
 $chapter_number = $current_chapter > 0 ? $current_chapter : $current_chapter_number;
 $link_qc = get_field("link_qc", 2);
-$img_qc_field = get_field("qc_img", 2);
-$img_qc = $img_qc_field ? $img_qc_field['url'] : '';
 
-// Kiểm tra VIP
-$vip_data = get_user_meta($user_id, 'vip_package', true);
+// Kiểm tra trạng thái VIP
 $is_vip = false;
-if ($vip_data && !empty($vip_data['is_active'])) {
-    if ($vip_data['package_type'] === 'vip_permanent') {
-        $is_vip = true;
-    } elseif ($vip_data['package_type'] === 'vip_2_months') {
-        $expiry_date = strtotime($vip_data['expiry_date']);
-        $current_date = strtotime(current_time('mysql'));
-        if ($current_date <= $expiry_date) {
-            $is_vip = true;
-        }
+if ($user_id) {
+    if (function_exists('check_user_vip_status')) {
+        $is_vip = check_user_vip_status($user_id);
     }
 }
-
-$show_ad = ($chapter_number > 0 && ($chapter_number - 2) % 15 == 0 && !$is_vip);
 
 // Tăng lượt view cho truyện cha khi vào chương
 if ($truyen_id) {
@@ -146,29 +134,9 @@ get_header();
                     <?php endif; ?>
                 </header>
 
-                                <!-- *** THÊM KHỐI QUẢNG CÁO *** -->
-                <div id="chapter-ad-block" style="display: <?php echo $show_ad ? 'block' : 'none'; ?>;">
-                    <?php if ($show_ad && $img_qc && $link_qc): ?>
-                        <div style="text-align:center; margin: 20px 0; padding: 20px; background: transparent; border-radius: 10px; border: 2px solid #dee2e6;">
-                            <h4 style="color: #fff; margin-bottom: 10px;">Mời bạn CLICK vào liên kết bên dưới và</h4>
-                            <h3><strong style="color: red; font-weight: bold;">MỞ ỨNG DỤNG SHOPEE</strong> để tiếp tục đọc!</h3> 
-                            <a style="display: block; font-size: 16px; margin: 10px 0; color: #007bff; word-break: break-all;" href="<?php echo esc_url($link_qc); ?>">👉<?php echo esc_url($link_qc); ?></a>
-                            <img src="<?php echo esc_url($img_qc); ?>" alt="Ad Banner"
-                                id="adBannerClick"
-                                style="width: 100%; max-width: 800px; cursor: pointer; border-radius: 8px; object-fit: contain; margin: 15px 0;" />
-                            <h3 style="color: red; font-weight: bold; margin: 20px 0;"><?php echo get_bloginfo('name'); ?> XIN CHÂN THÀNH CẢM ƠN QUÝ ĐỌC GIẢ!</h3>
-                            <p style="color: #666; font-size: 14px; margin-top: 15px;">
-                                <i class="fas fa-info-circle"></i> Click vào bất kỳ đâu trong khung này để mở Shopee và tiếp tục đọc truyện
-                            </p>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
                 <!-- NỘI DUNG CHƯƠNG -->
-                <div id="chapter-content" style="display: <?php echo $show_ad ? 'none' : 'block'; ?>;">
-                    <div class="entry-content" id="reader-content" style="color: #000">
-                        <?php the_content(); ?>
-                    </div>
+                <div class="entry-content" id="reader-content" style="color: #000">
+                    <?php the_content(); ?>
                 </div>
 
                 <!-- Floating Sidebar -->
@@ -1041,7 +1009,7 @@ if ('speechSynthesis' in window) {
                                         Chương sau <i class="fas fa-chevron-right"></i>
                                     </a>
                                 <?php else: ?>
-                                    <a href="<?php echo $next_chapter_url; ?>" class="btn btn-outline-primary">
+                                    <a href="<?php echo $next_chapter_url; ?>" class="btn btn-outline-primary" id="btn-next-chapter">
                                         Chương sau <i class="fas fa-chevron-right"></i>
                                     </a>
                                 <?php endif; ?>
@@ -1052,46 +1020,45 @@ if ('speechSynthesis' in window) {
 
                 <script>
                 jQuery(document).ready(function($) {
-                    // Define redirectUrl outside of conditions
+                    // Truyền biến PHP sang JS
+                    const isVip = <?php echo json_encode($is_vip); ?>;
                     const redirectUrl = <?php echo json_encode($link_qc); ?>;
+                    const currentChapterNumber = <?php echo json_encode($chapter_number); ?>;
 
-                    // *** XỬ LÝ QUẢNG CÁO ***
-                    <?php if ($show_ad && $img_qc && $link_qc): ?>
-                    const truyenId = <?php echo json_encode($truyen_id); ?>;
-                    const adClickedKey = 'shopee_ad_clicked_' + truyenId;
-                    const adBlock = document.getElementById('chapter-ad-block');
-                    const content = document.getElementById('chapter-content');
-                    const btnNext = document.getElementsByClassName('button-next-chapter');
+                    // *** XỬ LÝ CLICK NEXT CHAPTER VỚI QUẢNG CÁO ***
+                    // Mở quảng cáo mỗi 5 chương khi click next chapter (chỉ khi không phải VIP)
+                    <?php if ($link_qc && !$is_vip): ?>
+                    $('#btn-next-chapter').on('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const nextChapterUrl = $(this).attr('href');
 
-                    // Nếu đã click quảng cáo ở truyện này rồi thì ẩn quảng cáo
-                    if (localStorage.getItem(adClickedKey) === 'true') {
-                        adBlock.style.display = 'none';
-                        btnNext[0].style.display = 'block';
-                        content.style.display = 'block';
-                    } else {
-                        // Gán click cho toàn bộ khối quảng cáo
-                        adBlock.addEventListener('click', function() {
-                            window.open(redirectUrl, "_blank");
-                            adBlock.style.display = 'none';
-                            content.style.display = 'block';
-                            btnNext[0].style.display = 'block';
-                            localStorage.setItem(adClickedKey, 'true');
-                        });
-                        
-                        // Thêm hiệu ứng hover
-                        adBlock.addEventListener('mouseenter', function() {
-                            this.style.transform = 'scale(1.02)';
-                            this.style.transition = 'transform 0.3s ease';
-                        });
-                        
-                        adBlock.addEventListener('mouseleave', function() {
-                            this.style.transform = 'scale(1)';
-                        });
-                    }
+                        // Tính số chương tiếp theo (chương hiện tại + 1)
+                        const nextChapterNumber = currentChapterNumber + 1;
+
+                        // Kiểm tra nếu chương tiếp theo chia hết cho 5 thì mở quảng cáo
+                        if (redirectUrl && redirectUrl.trim() !== '' && nextChapterNumber % 5 === 0) {
+                            // Mở link quảng cáo trong tab mới (background)
+                            const adWindow = window.open(redirectUrl, '_blank', 'noopener,noreferrer');
+
+                            // Cố gắng blur tab quảng cáo và focus lại tab hiện tại
+                            if (adWindow) {
+                                try {
+                                    adWindow.blur();
+                                    window.focus();
+                                } catch (err) {
+                                    // Trình duyệt có thể chặn blur/focus
+                                }
+                            }
+                        }
+
+                        // Chuyển sang chương tiếp theo NGAY LẬP TỨC
+                        window.location.href = nextChapterUrl;
+                    });
                     <?php endif; ?>
 
                     // *** XỬ LÝ MOBILE POPUP ***
-                    <?php if ($img_qc && $link_qc): ?>
+                    <?php if ($link_qc && !$is_vip): ?>
                     const mobilePopup = document.getElementById('mobile-circular-popup');
                     const mobilePopupKey = 'mobile_popup_clicked';
                     const pageLoadCountKey = 'mobile_popup_page_loads';
