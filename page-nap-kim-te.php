@@ -601,7 +601,10 @@ $paypal_client_id = get_option('paypal_client_id', '');
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Hủy</button>
-                <button id="confirmDepositBtn" class="btn btn-success" type="button">Xác nhận</button>
+                <button id="confirmDepositBtn" class="btn btn-success" type="button" disabled>
+                    <span id="countdownText">Vui lòng chờ <span id="countdown">30</span>s</span>
+                    <span id="confirmText" style="display: none;">Xác nhận</span>
+                </button>
             </div>
         </div>
     </div>
@@ -757,6 +760,70 @@ jQuery(function ($) {
             'overflow': '',
             'padding-right': ''
         });
+        
+        // Reset countdown khi đóng modal
+        clearInterval(window.countdownInterval);
+        resetConfirmButton();
+    });
+    
+    // Countdown và enable nút xác nhận
+    let countdownTime = 30;
+    
+    function startCountdown() {
+        countdownTime = 30;
+        const countdownEl = $('#countdown');
+        const countdownTextEl = $('#countdownText');
+        const confirmTextEl = $('#confirmText');
+        const confirmBtn = $('#confirmDepositBtn');
+        
+        // Reset trạng thái
+        confirmBtn.prop('disabled', true);
+        countdownTextEl.show();
+        confirmTextEl.hide();
+        countdownEl.text(countdownTime);
+        
+        // Bắt đầu đếm ngược
+        window.countdownInterval = setInterval(function() {
+            countdownTime--;
+            countdownEl.text(countdownTime);
+            
+            if (countdownTime <= 0) {
+                clearInterval(window.countdownInterval);
+                // Enable nút và đổi text
+                confirmBtn.prop('disabled', false);
+                countdownTextEl.hide();
+                confirmTextEl.show();
+            }
+        }, 1000);
+    }
+    
+    function resetConfirmButton() {
+        const countdownTextEl = $('#countdownText');
+        const confirmTextEl = $('#confirmText');
+        const confirmBtn = $('#confirmDepositBtn');
+        
+        confirmBtn.prop('disabled', true);
+        countdownTextEl.show();
+        confirmTextEl.hide();
+        $('#countdown').text(30);
+    }
+    
+    // Bắt đầu countdown khi modal mở
+    modalEl.addEventListener('shown.bs.modal', function (event) {
+        startCountdown();
+    });
+    
+    // Xử lý khi click nút xác nhận
+    $('#confirmDepositBtn').on('click', function() {
+        if (!$(this).prop('disabled')) {
+            // Đóng modal
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+            // Redirect đến trang author
+            const username = '<?php echo esc_js($current_user->user_login); ?>';
+            window.location.href = '<?php echo home_url('/author/'); ?>' + username + '/';
+        }
     });
     
     // Khởi tạo - disable button ban đầu
