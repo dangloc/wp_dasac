@@ -4,7 +4,7 @@ $completed_args = array(
     'post_type'      => 'truyen_chu',
     'posts_per_page' => 13,
     'orderby'        => 'date',
-    'order'          => 'ASC',
+    'order'          => 'DESC',
     'tax_query'      => array(
         array(
             'taxonomy' => 'trang_thai',
