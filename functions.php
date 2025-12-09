@@ -2216,7 +2216,7 @@ if (!function_exists('render_table_truyen')) {
     function render_table_truyen($the_loai_id = 0, $paged = 1) {
         $args = array(
             'post_type' => 'truyen_chu',
-            'posts_per_page' => 20,
+            'posts_per_page' => 15,
             'orderby' => 'modified',
             'order' => 'DESC',
             'paged' => $paged
