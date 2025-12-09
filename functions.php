@@ -2216,7 +2216,7 @@ if (!function_exists('render_table_truyen')) {
     function render_table_truyen($the_loai_id = 0, $paged = 1) {
         $args = array(
             'post_type' => 'truyen_chu',
-            'posts_per_page' => 30,
+            'posts_per_page' => 10,
             'orderby' => 'modified',
             'order' => 'DESC',
             'paged' => $paged
@@ -2249,12 +2249,6 @@ if (!function_exists('render_table_truyen')) {
                             }
                             ?>
                         </td>
-                        <td>
-                            <?php
-                            $modified_time = get_the_modified_time('U');
-                            echo human_time_diff($modified_time, current_time('timestamp')) . ' trước';
-                            ?>
-                        </td>
                     </tr>
                 <?php endwhile; ?>
                 </tbody>
@@ -2265,11 +2259,55 @@ if (!function_exists('render_table_truyen')) {
             if ($total_pages > 1) {
                 echo '<nav class="d-flex justify-content-center">';
                 echo '<ul class="pagination">';
-                for ($i = 1; $i <= $total_pages; $i++) {
-                    echo '<li class="page-item'.($i == $paged ? ' active' : '').'">';
-                    echo '<a href="#" class="page-numbers page-link" data-page="'.$i.'">'.$i.'</a>';
+                
+                // Nút Previous
+                if ($paged > 1) {
+                    echo '<li class="page-item">';
+                    echo '<a href="#" class="page-numbers page-link" data-page="'.($paged - 1).'">&laquo;</a>';
                     echo '</li>';
                 }
+                
+                // Hiển thị pagination với giới hạn
+                $range = 2; // Số trang hiển thị mỗi bên của trang hiện tại
+                $show_dots_start = false;
+                $show_dots_end = false;
+                
+                for ($i = 1; $i <= $total_pages; $i++) {
+                    // Luôn hiển thị trang 1
+                    if ($i == 1) {
+                        echo '<li class="page-item'.($i == $paged ? ' active' : '').'">';
+                        echo '<a href="#" class="page-numbers page-link" data-page="'.$i.'">'.$i.'</a>';
+                        echo '</li>';
+                    }
+                    // Hiển thị ... sau trang 1 nếu cần
+                    elseif ($i == 2 && $paged > ($range + 2)) {
+                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    // Hiển thị các trang trong phạm vi của trang hiện tại
+                    elseif ($i >= ($paged - $range) && $i <= ($paged + $range) && $i != 1 && $i != $total_pages) {
+                        echo '<li class="page-item'.($i == $paged ? ' active' : '').'">';
+                        echo '<a href="#" class="page-numbers page-link" data-page="'.$i.'">'.$i.'</a>';
+                        echo '</li>';
+                    }
+                    // Hiển thị ... trước trang cuối nếu cần
+                    elseif ($i == ($total_pages - 1) && $paged < ($total_pages - $range - 1)) {
+                        echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
+                    }
+                    // Luôn hiển thị trang cuối
+                    elseif ($i == $total_pages) {
+                        echo '<li class="page-item'.($i == $paged ? ' active' : '').'">';
+                        echo '<a href="#" class="page-numbers page-link" data-page="'.$i.'">'.$i.'</a>';
+                        echo '</li>';
+                    }
+                }
+                
+                // Nút Next
+                if ($paged < $total_pages) {
+                    echo '<li class="page-item">';
+                    echo '<a href="#" class="page-numbers page-link" data-page="'.($paged + 1).'">&raquo;</a>';
+                    echo '</li>';
+                }
+                
                 echo '</ul></nav>';
             }
             wp_reset_postdata();
