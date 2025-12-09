@@ -2510,7 +2510,7 @@ if (!function_exists('render_box_full')) {
             'post_type'      => 'truyen_chu',
             'posts_per_page' => 13,
             'orderby'        => 'date',
-            'order'          => 'ASC',
+            'order'          => 'DESC',
             'tax_query'      => array(
                 array(
                     'taxonomy' => 'trang_thai',
