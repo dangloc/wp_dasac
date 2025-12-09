@@ -2216,7 +2216,7 @@ if (!function_exists('render_table_truyen')) {
     function render_table_truyen($the_loai_id = 0, $paged = 1) {
         $args = array(
             'post_type' => 'truyen_chu',
-            'posts_per_page' => 10,
+            'posts_per_page' => 20,
             'orderby' => 'modified',
             'order' => 'DESC',
             'paged' => $paged
@@ -2232,10 +2232,19 @@ if (!function_exists('render_table_truyen')) {
         }
         $query = new WP_Query($args);
         if ($query->have_posts()) : ?>
-            <table class="table">
+            <table class="table table-truyen">
                 <tbody>
                 <?php while ($query->have_posts()) : $query->the_post(); ?>
                     <tr>
+                        <td class="td-thumbnail">
+                            <a href="<?php the_permalink(); ?>">
+                                <?php if (has_post_thumbnail()) : ?>
+                                    <?php the_post_thumbnail('thumbnail', array('class' => 'truyen-thumb', 'style' => 'width: 50px; height: 70px; object-fit: cover; border-radius: 4px;')); ?>
+                                <?php else : ?>
+                                    <img src="<?php echo get_template_directory_uri(); ?>/assets/images/no-image.png" alt="No image" class="truyen-thumb" style="width: 50px; height: 70px; object-fit: cover; border-radius: 4px;">
+                                <?php endif; ?>
+                            </a>
+                        </td>
                         <td>
                             <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                         </td>
