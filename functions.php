@@ -3191,3 +3191,483 @@ function send_application_status_email($user_id, $status) {
     wp_mail($to, $subject, $message);
 }
 
+/**
+ * Register admin menu for revenue management
+ */
+function register_revenue_management_menu() {
+    add_menu_page(
+        'Quản lý doanh thu',          // Page title
+        'Quản lý doanh thu',          // Menu title
+        'manage_options',              // Capability
+        'revenue-management',          // Menu slug
+        'render_revenue_management_page', // Callback function
+        'dashicons-chart-line',        // Icon
+        26                             // Position
+    );
+}
+add_action('admin_menu', 'register_revenue_management_menu');
+
+/**
+ * Calculate revenue for a specific truyen
+ */
+function calculate_truyen_revenue($truyen_id) {
+    global $wpdb;
+    
+    $total_revenue = 0;
+    $purchase_count = 0;
+    
+    // Get all users
+    $users = get_users();
+    
+    foreach ($users as $user) {
+        // Get purchased chapters for this user
+        $purchased_chapters = get_user_meta($user->ID, '_purchased_chapters', true);
+        
+        if (is_array($purchased_chapters)) {
+            foreach ($purchased_chapters as $chapter_id => $purchase_data) {
+                // Check if this chapter belongs to the truyen
+                if (isset($purchase_data['truyen_id']) && $purchase_data['truyen_id'] == $truyen_id) {
+                    $price = isset($purchase_data['price']) ? floatval($purchase_data['price']) : 0;
+                    $total_revenue += $price;
+                    $purchase_count++;
+                }
+            }
+        }
+    }
+    
+    return array(
+        'revenue' => $total_revenue,
+        'purchases' => $purchase_count
+    );
+}
+
+/**
+ * Render revenue management page
+ */
+function render_revenue_management_page() {
+    // Get selected year from URL parameter, default to current year
+    $selected_year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
+    
+    // Get all truyen_chu posts
+    $args = array(
+        'post_type' => 'truyen_chu',
+        'posts_per_page' => -1,
+        'post_status' => 'any',
+        'orderby' => 'date',
+        'order' => 'DESC'
+    );
+    
+    $truyen_query = new WP_Query($args);
+    $truyen_list = $truyen_query->posts;
+    
+    // Calculate revenue for each truyen
+    $revenue_data = array();
+    $total_all_revenue = 0;
+    
+    // Calculate monthly revenue for chart
+    $monthly_revenue = array_fill(1, 12, 0); // Initialize 12 months with 0
+    
+    // Get all available years from purchase data
+    $available_years = array();
+    
+    // Get all users and calculate monthly revenue
+    $users = get_users();
+    foreach ($users as $user) {
+        $purchased_chapters = get_user_meta($user->ID, '_purchased_chapters', true);
+        
+        if (is_array($purchased_chapters)) {
+            foreach ($purchased_chapters as $chapter_id => $purchase_data) {
+                if (isset($purchase_data['purchase_date']) && isset($purchase_data['price'])) {
+                    $purchase_date = $purchase_data['purchase_date'];
+                    $purchase_year = intval(date('Y', strtotime($purchase_date)));
+                    $purchase_month = intval(date('n', strtotime($purchase_date))); // 1-12
+                    
+                    // Collect all years
+                    if (!in_array($purchase_year, $available_years)) {
+                        $available_years[] = $purchase_year;
+                    }
+                    
+                    // Only count selected year
+                    if ($purchase_year == $selected_year) {
+                        $monthly_revenue[$purchase_month] += floatval($purchase_data['price']);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Sort years descending
+    rsort($available_years);
+    
+    // Always add current year if not already in the list
+    $current_year = intval(date('Y'));
+    if (!in_array($current_year, $available_years)) {
+        $available_years[] = $current_year;
+    }
+    
+    // Add future years (next 2 years) if not already in the list
+    for ($i = 1; $i <= 2; $i++) {
+        $future_year = $current_year + $i;
+        if (!in_array($future_year, $available_years)) {
+            $available_years[] = $future_year;
+        }
+    }
+    
+    // Sort again to include all years
+    rsort($available_years);
+    
+    foreach ($truyen_list as $truyen) {
+        $revenue_info = calculate_truyen_revenue($truyen->ID);
+        $revenue_data[$truyen->ID] = $revenue_info;
+        $total_all_revenue += $revenue_info['revenue'];
+    }
+    
+    // Sort by revenue (highest first)
+    if (isset($_GET['orderby']) && $_GET['orderby'] === 'revenue') {
+        usort($truyen_list, function($a, $b) use ($revenue_data) {
+            return $revenue_data[$b->ID]['revenue'] - $revenue_data[$a->ID]['revenue'];
+        });
+    }
+    
+    ?>
+    <div class="wrap">
+        <h1 class="wp-heading-inline">Quản lý doanh thu truyện</h1>
+        <hr class="wp-header-end">
+        
+        <div class="revenue-summary" style="background: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <h2 style="margin-top: 0;">Tổng quan</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div style="background: #e7f3ff; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 14px; color: #666;">Tổng số truyện</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #0073aa;"><?php echo count($truyen_list); ?></div>
+                </div>
+                <div style="background: #d4edda; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 14px; color: #666;">Tổng doanh thu (tất cả)</div>
+                    <div style="font-size: 28px; font-weight: bold; color: #28a745;"><?php echo number_format($total_all_revenue); ?> VNĐ</div>
+                </div>
+                <div style="background: #fff3cd; padding: 15px; border-radius: 8px;">
+                    <div style="font-size: 14px; color: #666;">Doanh thu năm <?php echo $selected_year; ?></div>
+                    <div style="font-size: 28px; font-weight: bold; color: #856404;"><?php echo number_format(array_sum($monthly_revenue)); ?> VNĐ</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Monthly Revenue Chart -->
+        <div class="revenue-chart" style="background: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Biểu đồ doanh thu theo tháng</h2>
+                <div>
+                    <label for="year-filter" style="margin-right: 10px; font-weight: 600;">Chọn năm:</label>
+                    <select id="year-filter" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;">
+                        <?php foreach ($available_years as $year) : ?>
+                            <option value="<?php echo $year; ?>" <?php selected($selected_year, $year); ?>>
+                                <?php echo $year; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <canvas id="monthlyRevenueChart" style="max-height: 400px;"></canvas>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+        <script>
+        // Year filter change handler
+        document.getElementById('year-filter').addEventListener('change', function() {
+            const year = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('year', year);
+            window.location.href = url.toString();
+        });
+        
+        const ctx = document.getElementById('monthlyRevenueChart');
+        
+        const monthlyData = <?php echo json_encode(array_values($monthly_revenue)); ?>;
+        const monthLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
+                            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: monthLabels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: monthlyData,
+                    backgroundColor: 'rgba(40, 167, 69, 0.6)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    hoverBackgroundColor: 'rgba(40, 167, 69, 0.8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' VNĐ';
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('vi-VN', {
+                                    notation: 'compact',
+                                    compactDisplay: 'short'
+                                }).format(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        </script>
+        
+        <form method="get">
+            <input type="hidden" name="page" value="revenue-management">
+            
+            <div class="tablenav top">
+                <div class="alignleft actions">
+                    <a href="<?php echo admin_url('admin.php?page=revenue-management&orderby=revenue'); ?>" class="button">Sắp xếp theo doanh thu</a>
+                    <a href="<?php echo admin_url('admin.php?page=revenue-management'); ?>" class="button">Sắp xếp theo ngày</a>
+                </div>
+            </div>
+            
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">STT</th>
+                        <th>Tên truyện</th>
+                        <th>Tác giả</th>
+                        <th>Trạng thái</th>
+                        <th style="width: 120px;">Số lượt mua</th>
+                        <th style="width: 150px;">Doanh thu</th>
+                        <th style="width: 100px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($truyen_list)) : ?>
+                        <tr>
+                            <td colspan="7">Chưa có truyện nào.</td>
+                        </tr>
+                    <?php else : ?>
+                        <?php 
+                        $stt = 1;
+                        foreach ($truyen_list as $truyen) : 
+                            $author = get_user_by('id', $truyen->post_author);
+                            $revenue_info = $revenue_data[$truyen->ID];
+                            
+                            $status_labels = array(
+                                'publish' => '<span style="color: green;">✓ Đã xuất bản</span>',
+                                'pending' => '<span style="color: orange;">⏳ Chờ duyệt</span>',
+                                'draft' => '<span style="color: gray;">📝 Bản nháp</span>',
+                                'private' => '<span style="color: blue;">🔒 Riêng tư</span>',
+                            );
+                            $status_label = isset($status_labels[$truyen->post_status]) ? $status_labels[$truyen->post_status] : $truyen->post_status;
+                        ?>
+                            <tr>
+                                <td><?php echo $stt++; ?></td>
+                                <td>
+                                    <strong>
+                                        <a href="<?php echo get_edit_post_link($truyen->ID); ?>">
+                                            <?php echo esc_html($truyen->post_title); ?>
+                                        </a>
+                                    </strong>
+                                </td>
+                                <td><?php echo $author ? esc_html($author->display_name) : '—'; ?></td>
+                                <td><?php echo $status_label; ?></td>
+                                <td style="text-align: center;">
+                                    <strong><?php echo number_format($revenue_info['purchases']); ?></strong> lượt
+                                </td>
+                                <td style="text-align: right;">
+                                    <strong style="color: #28a745; font-size: 16px;">
+                                        <?php echo number_format($revenue_info['revenue']); ?> VNĐ
+                                    </strong>
+                                </td>
+                                <td>
+                                    <a href="<?php echo admin_url('admin.php?page=revenue-management&action=view&truyen_id=' . $truyen->ID); ?>" class="button button-small">
+                                        Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+                <tfoot>
+                    <tr style="background: #f0f0f1; font-weight: bold;">
+                        <td colspan="4" style="text-align: right; padding-right: 10px;">TỔNG CỘNG:</td>
+                        <td style="text-align: center;">
+                            <?php 
+                            $total_purchases = array_sum(array_column($revenue_data, 'purchases'));
+                            echo number_format($total_purchases); 
+                            ?> lượt
+                        </td>
+                        <td style="text-align: right; color: #28a745; font-size: 16px;">
+                            <?php echo number_format($total_all_revenue); ?> VNĐ
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </form>
+        
+        <?php
+        // Show detail view if requested
+        if (isset($_GET['action']) && $_GET['action'] === 'view' && isset($_GET['truyen_id'])) {
+            $truyen_id = intval($_GET['truyen_id']);
+            $truyen = get_post($truyen_id);
+            
+            if ($truyen) {
+                render_truyen_revenue_detail($truyen_id);
+            }
+        }
+        ?>
+    </div>
+    
+    <style>
+    .revenue-summary h2 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    .wp-list-table th {
+        font-weight: 600;
+    }
+    .wp-list-table tbody tr:hover {
+        background-color: #f6f7f7;
+    }
+    </style>
+    <?php
+}
+
+/**
+ * Render detailed revenue view for a specific truyen
+ */
+function render_truyen_revenue_detail($truyen_id) {
+    $truyen = get_post($truyen_id);
+    if (!$truyen) {
+        return;
+    }
+    
+    // Get all purchase transactions for this truyen
+    $users = get_users();
+    $transactions = array();
+    
+    foreach ($users as $user) {
+        $purchased_chapters = get_user_meta($user->ID, '_purchased_chapters', true);
+        
+        if (is_array($purchased_chapters)) {
+            foreach ($purchased_chapters as $chapter_id => $purchase_data) {
+                if (isset($purchase_data['truyen_id']) && $purchase_data['truyen_id'] == $truyen_id) {
+                    $chapter = get_post($chapter_id);
+                    $transactions[] = array(
+                        'user' => $user,
+                        'chapter' => $chapter,
+                        'purchase_data' => $purchase_data
+                    );
+                }
+            }
+        }
+    }
+    
+    // Sort by date (newest first)
+    usort($transactions, function($a, $b) {
+        $date_a = isset($a['purchase_data']['purchase_date']) ? strtotime($a['purchase_data']['purchase_date']) : 0;
+        $date_b = isset($b['purchase_data']['purchase_date']) ? strtotime($b['purchase_data']['purchase_date']) : 0;
+        return $date_b - $date_a;
+    });
+    
+    $total_revenue = array_sum(array_column(array_column($transactions, 'purchase_data'), 'price'));
+    
+    ?>
+    <div class="revenue-detail" style="background: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <h2>Chi tiết doanh thu: <?php echo esc_html($truyen->post_title); ?></h2>
+        <p><a href="<?php echo admin_url('admin.php?page=revenue-management'); ?>">&larr; Quay lại danh sách</a></p>
+        
+        <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin: 15px 0;">
+            <strong>Tổng doanh thu:</strong> 
+            <span style="font-size: 24px; color: #28a745; font-weight: bold;">
+                <?php echo number_format($total_revenue); ?> VNĐ
+            </span>
+            <span style="margin-left: 20px;">
+                (<?php echo count($transactions); ?> giao dịch)
+            </span>
+        </div>
+        
+        <h3>Lịch sử giao dịch</h3>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th style="width: 50px;">STT</th>
+                    <th>Người mua</th>
+                    <th>Chương</th>
+                    <th style="width: 150px;">Ngày mua</th>
+                    <th style="width: 120px;">Giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($transactions)) : ?>
+                    <tr>
+                        <td colspan="5">Chưa có giao dịch nào.</td>
+                    </tr>
+                <?php else : ?>
+                    <?php 
+                    $stt = 1;
+                    foreach ($transactions as $transaction) : 
+                        $user = $transaction['user'];
+                        $chapter = $transaction['chapter'];
+                        $purchase_data = $transaction['purchase_data'];
+                    ?>
+                        <tr>
+                            <td><?php echo $stt++; ?></td>
+                            <td>
+                                <a href="<?php echo admin_url('user-edit.php?user_id=' . $user->ID); ?>">
+                                    <?php echo esc_html($user->display_name); ?>
+                                </a>
+                                <br>
+                                <small style="color: #666;"><?php echo esc_html($user->user_email); ?></small>
+                            </td>
+                            <td>
+                                <?php if ($chapter) : ?>
+                                    <a href="<?php echo get_edit_post_link($chapter->ID); ?>">
+                                        <?php echo esc_html($chapter->post_title); ?>
+                                    </a>
+                                <?php else : ?>
+                                    <em>Chương đã bị xóa</em>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php 
+                                if (isset($purchase_data['purchase_date'])) {
+                                    echo date('d/m/Y H:i', strtotime($purchase_data['purchase_date']));
+                                } else {
+                                    echo '—';
+                                }
+                                ?>
+                            </td>
+                            <td style="text-align: right; font-weight: bold; color: #28a745;">
+                                <?php echo number_format($purchase_data['price']); ?> VNĐ
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+}
+
