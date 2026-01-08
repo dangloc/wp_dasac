@@ -1090,6 +1090,23 @@ function handle_buy_combo() {
         update_user_meta($user_id, '_chapter_purchase_log', $transaction_log);
     }
     
+    // Lưu giao dịch combo riêng để tính doanh thu
+    $combo_transactions = get_user_meta($user_id, '_combo_purchases', true);
+    if (!is_array($combo_transactions)) {
+        $combo_transactions = array();
+    }
+    
+    $combo_transactions[] = array(
+        'truyen_id' => $truyen_id,
+        'purchase_date' => current_time('mysql'),
+        'original_price' => $combo_original,
+        'discount_percentage' => $discount_percentage,
+        'final_price' => $combo_price,
+        'chapters_count' => count($chapters_to_purchase)
+    );
+    
+    update_user_meta($user_id, '_combo_purchases', $combo_transactions);
+    
     wp_send_json_success(array(
         'message' => 'Mua combo thành công',
         'new_balance' => $new_balance
@@ -3220,16 +3237,33 @@ function calculate_truyen_revenue($truyen_id) {
     $users = get_users();
     
     foreach ($users as $user) {
-        // Get purchased chapters for this user
+        // 1. Individual chapter purchases
         $purchased_chapters = get_user_meta($user->ID, '_purchased_chapters', true);
         
         if (is_array($purchased_chapters)) {
             foreach ($purchased_chapters as $chapter_id => $purchase_data) {
                 // Check if this chapter belongs to the truyen
                 if (isset($purchase_data['truyen_id']) && $purchase_data['truyen_id'] == $truyen_id) {
-                    $price = isset($purchase_data['price']) ? floatval($purchase_data['price']) : 0;
+                    // Only count if NOT a combo purchase (combo has price = 0)
+                    if (!isset($purchase_data['is_combo_purchase']) || !$purchase_data['is_combo_purchase']) {
+                        $price = isset($purchase_data['price']) ? floatval($purchase_data['price']) : 0;
+                        $total_revenue += $price;
+                        $purchase_count++;
+                    }
+                }
+            }
+        }
+        
+        // 2. Combo purchases
+        $combo_purchases = get_user_meta($user->ID, '_combo_purchases', true);
+        
+        if (is_array($combo_purchases)) {
+            foreach ($combo_purchases as $combo_data) {
+                // Check if this combo belongs to the truyen
+                if (isset($combo_data['truyen_id']) && $combo_data['truyen_id'] == $truyen_id) {
+                    $price = isset($combo_data['final_price']) ? floatval($combo_data['final_price']) : 0;
                     $total_revenue += $price;
-                    $purchase_count++;
+                    $purchase_count++; // Count combo as 1 purchase
                 }
             }
         }
@@ -3273,12 +3307,39 @@ function render_revenue_management_page() {
     // Get all users and calculate monthly revenue
     $users = get_users();
     foreach ($users as $user) {
+        // 1. Individual chapter purchases
         $purchased_chapters = get_user_meta($user->ID, '_purchased_chapters', true);
         
         if (is_array($purchased_chapters)) {
             foreach ($purchased_chapters as $chapter_id => $purchase_data) {
                 if (isset($purchase_data['purchase_date']) && isset($purchase_data['price'])) {
-                    $purchase_date = $purchase_data['purchase_date'];
+                    // Only count if NOT a combo purchase
+                    if (!isset($purchase_data['is_combo_purchase']) || !$purchase_data['is_combo_purchase']) {
+                        $purchase_date = $purchase_data['purchase_date'];
+                        $purchase_year = intval(date('Y', strtotime($purchase_date)));
+                        $purchase_month = intval(date('n', strtotime($purchase_date))); // 1-12
+                        
+                        // Collect all years
+                        if (!in_array($purchase_year, $available_years)) {
+                            $available_years[] = $purchase_year;
+                        }
+                        
+                        // Only count selected year
+                        if ($purchase_year == $selected_year) {
+                            $monthly_revenue[$purchase_month] += floatval($purchase_data['price']);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // 2. Combo purchases
+        $combo_purchases = get_user_meta($user->ID, '_combo_purchases', true);
+        
+        if (is_array($combo_purchases)) {
+            foreach ($combo_purchases as $combo_data) {
+                if (isset($combo_data['purchase_date']) && isset($combo_data['final_price'])) {
+                    $purchase_date = $combo_data['purchase_date'];
                     $purchase_year = intval(date('Y', strtotime($purchase_date)));
                     $purchase_month = intval(date('n', strtotime($purchase_date))); // 1-12
                     
@@ -3289,7 +3350,7 @@ function render_revenue_management_page() {
                     
                     // Only count selected year
                     if ($purchase_year == $selected_year) {
-                        $monthly_revenue[$purchase_month] += floatval($purchase_data['price']);
+                        $monthly_revenue[$purchase_month] += floatval($combo_data['final_price']);
                     }
                 }
             }
