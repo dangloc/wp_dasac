@@ -165,6 +165,9 @@ function commicpro_scripts() {
 	// Enqueue Bootstrap CSS from CDN
 	wp_enqueue_style( 'bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', array(), '5.3.2' );
 	
+	// Enqueue Font Awesome
+	wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0' );
+	
 	// Enqueue theme style
 	wp_enqueue_style( 'commicpro-style', get_stylesheet_uri(), array('bootstrap'), _S_VERSION );
 	wp_style_add_data( 'commicpro-style', 'rtl', 'replace' );
@@ -228,6 +231,24 @@ function register_post_type_truyen_chu() {
         'rewrite' => array('slug' => 'truyen-chu'),
         'has_archive' => true,
 		'taxonomies' => array('post_tag'),
+        'capability_type' => 'truyen_chu',
+        'map_meta_cap' => true,
+        'capabilities' => array(
+            'edit_post' => 'edit_truyen_chu',
+            'read_post' => 'read_truyen_chu',
+            'delete_post' => 'delete_truyen_chu',
+            'edit_posts' => 'edit_truyen_chus',
+            'edit_others_posts' => 'edit_others_truyen_chus',
+            'publish_posts' => 'publish_truyen_chus',
+            'read_private_posts' => 'read_private_truyen_chus',
+            'delete_posts' => 'delete_truyen_chus',
+            'delete_private_posts' => 'delete_private_truyen_chus',
+            'delete_published_posts' => 'delete_published_truyen_chus',
+            'delete_others_posts' => 'delete_others_truyen_chus',
+            'edit_private_posts' => 'edit_private_truyen_chus',
+            'edit_published_posts' => 'edit_published_truyen_chus',
+            'create_posts' => 'edit_truyen_chus',
+        ),
         'labels' => array(
             'name' => 'Truyện chữ',
             'singular_name' => 'Truyện chữ',
@@ -441,6 +462,24 @@ function register_post_type_chuong_truyen() {
         'show_in_rest' => true,
         'rewrite' => array('slug' => 'chuong'),
         'supports' => array('title', 'editor', 'comments'),
+        'capability_type' => 'chuong_truyen',
+        'map_meta_cap' => true,
+        'capabilities' => array(
+            'edit_post' => 'edit_chuong_truyen',
+            'read_post' => 'read_chuong_truyen',
+            'delete_post' => 'delete_chuong_truyen',
+            'edit_posts' => 'edit_chuong_truyens',
+            'edit_others_posts' => 'edit_others_chuong_truyens',
+            'publish_posts' => 'publish_chuong_truyens',
+            'read_private_posts' => 'read_private_chuong_truyens',
+            'delete_posts' => 'delete_chuong_truyens',
+            'delete_private_posts' => 'delete_private_chuong_truyens',
+            'delete_published_posts' => 'delete_published_chuong_truyens',
+            'delete_others_posts' => 'delete_others_chuong_truyens',
+            'edit_private_posts' => 'edit_private_chuong_truyens',
+            'edit_published_posts' => 'edit_published_chuong_truyens',
+            'create_posts' => 'edit_chuong_truyens',
+        ),
         'labels' => array(
             'name' => 'Chương',
             'singular_name' => 'Chương',
@@ -2587,3 +2626,568 @@ function filter_box_full_by_the_loai_callback() {
     render_box_full($the_loai);
     wp_die();
 }
+
+// AJAX handler for author registration
+add_action('wp_ajax_submit_author_registration', 'handle_author_registration');
+function handle_author_registration() {
+    // Verify nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'author_registration_nonce')) {
+        wp_send_json_error(array('message' => 'Phiên làm việc đã hết hạn, vui lòng tải lại trang.'));
+    }
+    
+    // Check if user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error(array('message' => 'Bạn cần đăng nhập để gửi đơn đăng ký.'));
+    }
+    
+    $user_id = get_current_user_id();
+    $user = wp_get_current_user();
+    
+    // Check if user already has an application (spam prevention)
+    $existing_application = get_user_meta($user_id, '_author_application', true);
+    if ($existing_application) {
+        $status = isset($existing_application['status']) ? $existing_application['status'] : 'pending';
+        $status_messages = array(
+            'pending' => 'Bạn đã gửi đơn đăng ký rồi. Đơn của bạn đang được xem xét.',
+            'approved' => 'Bạn đã là tác giả rồi!',
+            'rejected' => 'Đơn đăng ký của bạn đã bị từ chối. Vui lòng liên hệ admin để biết thêm chi tiết.'
+        );
+        $message = isset($status_messages[$status]) ? $status_messages[$status] : 'Bạn đã gửi đơn đăng ký rồi.';
+        wp_send_json_error(array('message' => $message));
+    }
+    
+    // Validate required fields
+    $facebook_link = isset($_POST['facebook_link']) ? sanitize_text_field($_POST['facebook_link']) : '';
+    
+    if (empty($facebook_link)) {
+        wp_send_json_error(array('message' => 'Vui lòng nhập link Facebook.'));
+    }
+    
+    // Validate URL format
+    if (!filter_var($facebook_link, FILTER_VALIDATE_URL)) {
+        wp_send_json_error(array('message' => 'Link Facebook không hợp lệ.'));
+    }
+    
+    // Get optional fields
+    $telegram_link = isset($_POST['telegram_link']) ? sanitize_text_field($_POST['telegram_link']) : '';
+    $other_platform = isset($_POST['other_platform']) ? sanitize_text_field($_POST['other_platform']) : '';
+    $other_platform_link = isset($_POST['other_platform_link']) ? sanitize_text_field($_POST['other_platform_link']) : '';
+    $bio = isset($_POST['bio']) ? sanitize_textarea_field($_POST['bio']) : '';
+    
+    // Validate optional URLs
+    if (!empty($telegram_link) && !filter_var($telegram_link, FILTER_VALIDATE_URL)) {
+        wp_send_json_error(array('message' => 'Link Telegram không hợp lệ.'));
+    }
+    
+    if (!empty($other_platform_link) && !filter_var($other_platform_link, FILTER_VALIDATE_URL)) {
+        wp_send_json_error(array('message' => 'Link nền tảng khác không hợp lệ.'));
+    }
+    
+    // Save application data as user meta
+    $application_data = array(
+        'facebook_link' => $facebook_link,
+        'telegram_link' => $telegram_link,
+        'other_platform' => $other_platform,
+        'other_platform_link' => $other_platform_link,
+        'bio' => $bio,
+        'submitted_at' => current_time('mysql'),
+        'status' => 'pending' // pending, approved, rejected
+    );
+    
+    update_user_meta($user_id, '_author_application', $application_data);
+    
+    // Send notification email to admin
+    $admin_email = get_option('admin_email');
+    $subject = '[Đăng ký tác giả] Đơn mới từ ' . $user->display_name;
+    $message = "Có đơn đăng ký làm tác giả mới:\n\n";
+    $message .= "Người dùng: " . $user->display_name . " (" . $user->user_email . ")\n";
+    $message .= "Link Facebook: " . $facebook_link . "\n";
+    if (!empty($telegram_link)) {
+        $message .= "Link Telegram: " . $telegram_link . "\n";
+    }
+    if (!empty($other_platform)) {
+        $message .= "Nền tảng khác: " . $other_platform . "\n";
+    }
+    if (!empty($other_platform_link)) {
+        $message .= "Link nền tảng khác: " . $other_platform_link . "\n";
+    }
+    if (!empty($bio)) {
+        $message .= "Giới thiệu:\n" . $bio . "\n";
+    }
+    $message .= "\nXem chi tiết tại: " . admin_url('user-edit.php?user_id=' . $user_id);
+    
+    wp_mail($admin_email, $subject, $message);
+    
+    wp_send_json_success(array(
+        'message' => 'Đơn đăng ký của bạn đã được gửi thành công! Chúng tôi sẽ xem xét và phản hồi trong vòng 24-48 giờ.'
+    ));
+}
+
+// Add author application info to user profile
+add_action('show_user_profile', 'show_author_application_in_profile');
+add_action('edit_user_profile', 'show_author_application_in_profile');
+function show_author_application_in_profile($user) {
+    $application = get_user_meta($user->ID, '_author_application', true);
+    
+    if (!$application) {
+        return;
+    }
+    ?>
+    <h3>Đơn đăng ký làm tác giả</h3>
+    <table class="form-table">
+        <tr>
+            <th>Trạng thái</th>
+            <td>
+                <?php
+                $status = isset($application['status']) ? $application['status'] : 'pending';
+                $status_labels = array(
+                    'pending' => '<span style="color: orange;">Đang chờ xét duyệt</span>',
+                    'approved' => '<span style="color: green;">Đã duyệt</span>',
+                    'rejected' => '<span style="color: red;">Từ chối</span>'
+                );
+                echo isset($status_labels[$status]) ? $status_labels[$status] : $status;
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <th>Ngày gửi</th>
+            <td><?php echo isset($application['submitted_at']) ? date('d/m/Y H:i', strtotime($application['submitted_at'])) : '—'; ?></td>
+        </tr>
+        <tr>
+            <th>Link Facebook</th>
+            <td><a href="<?php echo esc_url($application['facebook_link']); ?>" target="_blank"><?php echo esc_html($application['facebook_link']); ?></a></td>
+        </tr>
+        <?php if (!empty($application['telegram_link'])) : ?>
+        <tr>
+            <th>Link Telegram</th>
+            <td><a href="<?php echo esc_url($application['telegram_link']); ?>" target="_blank"><?php echo esc_html($application['telegram_link']); ?></a></td>
+        </tr>
+        <?php endif; ?>
+        <?php if (!empty($application['other_platform'])) : ?>
+        <tr>
+            <th>Nền tảng khác</th>
+            <td><?php echo esc_html($application['other_platform']); ?></td>
+        </tr>
+        <?php endif; ?>
+        <?php if (!empty($application['other_platform_link'])) : ?>
+        <tr>
+            <th>Link nền tảng khác</th>
+            <td><a href="<?php echo esc_url($application['other_platform_link']); ?>" target="_blank"><?php echo esc_html($application['other_platform_link']); ?></a></td>
+        </tr>
+        <?php endif; ?>
+        <?php if (!empty($application['bio'])) : ?>
+        <tr>
+            <th>Giới thiệu</th>
+            <td><?php echo nl2br(esc_html($application['bio'])); ?></td>
+        </tr>
+        <?php endif; ?>
+    </table>
+    
+    <?php if (current_user_can('edit_users')) : ?>
+    <h4>Quản lý đơn đăng ký</h4>
+    <table class="form-table">
+        <tr>
+            <th><label for="author_application_status">Cập nhật trạng thái</label></th>
+            <td>
+                <select name="author_application_status" id="author_application_status">
+                    <option value="pending" <?php selected($status, 'pending'); ?>>Đang chờ xét duyệt</option>
+                    <option value="approved" <?php selected($status, 'approved'); ?>>Duyệt</option>
+                    <option value="rejected" <?php selected($status, 'rejected'); ?>>Từ chối</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <?php endif; ?>
+    <?php
+}
+
+// Save author application status
+add_action('personal_options_update', 'save_author_application_status');
+add_action('edit_user_profile_update', 'save_author_application_status');
+function save_author_application_status($user_id) {
+    if (!current_user_can('edit_users')) {
+        return;
+    }
+    
+    if (isset($_POST['author_application_status'])) {
+        $application = get_user_meta($user_id, '_author_application', true);
+        if ($application) {
+            $old_status = $application['status'];
+            $new_status = sanitize_text_field($_POST['author_application_status']);
+            $application['status'] = $new_status;
+            update_user_meta($user_id, '_author_application', $application);
+            
+            // If approved, change to custom author role
+            if ($new_status === 'approved' && $old_status !== 'approved') {
+                $user = get_user_by('id', $user_id);
+                $user->set_role('tac_gia'); // Set to custom author role
+                
+                // Send approval email
+                send_application_status_email($user_id, 'approved');
+            } elseif ($new_status === 'rejected' && $old_status !== 'rejected') {
+                // Send rejection email
+                send_application_status_email($user_id, 'rejected');
+            }
+        }
+    }
+}
+
+/**
+ * Setup custom roles for the theme
+ */
+function setup_custom_roles() {
+    // Remove roles if they exist (for clean setup)
+    remove_role('tac_gia');
+    remove_role('quan_ly');
+    
+    // Create "Tác giả" role with limited capabilities
+    add_role('tac_gia', 'Tác giả', array(
+        'read' => true,
+        'edit_posts' => true,
+        'edit_published_posts' => true,
+        'delete_posts' => true,
+        'delete_published_posts' => true,
+        'upload_files' => true,
+        // Capabilities for truyen_chu (NO publish permission)
+        'edit_truyen_chus' => true,
+        'edit_published_truyen_chus' => true,
+        'delete_truyen_chus' => true,
+        'delete_published_truyen_chus' => true,
+        // Capabilities for chuong_truyen (NO publish permission)
+        'edit_chuong_truyens' => true,
+        'publish_chuong_truyens' => true,
+        'edit_published_chuong_truyens' => true,
+        'delete_chuong_truyens' => true,
+        'delete_published_chuong_truyens' => true,
+    ));
+    
+    // Create "Quản lý" role with management capabilities
+    add_role('quan_ly', 'Quản lý', array(
+        'read' => true,
+        'edit_posts' => true,
+        'edit_published_posts' => true,
+        'edit_others_posts' => true,
+        'publish_posts' => true,
+        'delete_posts' => true,
+        'delete_published_posts' => true,
+        'delete_others_posts' => true,
+        'upload_files' => true,
+        // Capabilities for truyen_chu
+        'edit_truyen_chus' => true,
+        'edit_published_truyen_chus' => true,
+        'edit_others_truyen_chus' => true,
+        'publish_truyen_chus' => true,
+        'delete_truyen_chus' => true,
+        'delete_published_truyen_chus' => true,
+        'delete_others_truyen_chus' => true,
+        // Capabilities for chuong_truyen
+        'edit_chuong_truyens' => true,
+        'edit_published_chuong_truyens' => true,
+        'edit_others_chuong_truyens' => true,
+        'publish_chuong_truyens' => true,
+        'delete_chuong_truyens' => true,
+        'delete_published_chuong_truyens' => true,
+        'delete_others_chuong_truyens' => true,
+    ));
+}
+add_action('after_switch_theme', 'setup_custom_roles');
+
+/**
+ * Add custom capabilities to post types
+ */
+function add_custom_capabilities_to_post_types() {
+    // Add capabilities to truyen_chu
+    $truyen_chu = get_post_type_object('truyen_chu');
+    if ($truyen_chu) {
+        $truyen_chu->cap->edit_post = 'edit_truyen_chu';
+        $truyen_chu->cap->edit_posts = 'edit_truyen_chus';
+        $truyen_chu->cap->edit_others_posts = 'edit_others_truyen_chus';
+        $truyen_chu->cap->publish_posts = 'publish_truyen_chus';
+        $truyen_chu->cap->read_post = 'read_truyen_chu';
+        $truyen_chu->cap->delete_post = 'delete_truyen_chu';
+        $truyen_chu->cap->delete_posts = 'delete_truyen_chus';
+        $truyen_chu->cap->delete_published_posts = 'delete_published_truyen_chus';
+        $truyen_chu->cap->delete_others_posts = 'delete_others_truyen_chus';
+        $truyen_chu->cap->edit_published_posts = 'edit_published_truyen_chus';
+    }
+    
+    // Add capabilities to chuong_truyen
+    $chuong_truyen = get_post_type_object('chuong_truyen');
+    if ($chuong_truyen) {
+        $chuong_truyen->cap->edit_post = 'edit_chuong_truyen';
+        $chuong_truyen->cap->edit_posts = 'edit_chuong_truyens';
+        $chuong_truyen->cap->edit_others_posts = 'edit_others_chuong_truyens';
+        $chuong_truyen->cap->publish_posts = 'publish_chuong_truyens';
+        $chuong_truyen->cap->read_post = 'read_chuong_truyen';
+        $chuong_truyen->cap->delete_post = 'delete_chuong_truyen';
+        $chuong_truyen->cap->delete_posts = 'delete_chuong_truyens';
+        $chuong_truyen->cap->delete_published_posts = 'delete_published_chuong_truyens';
+        $chuong_truyen->cap->delete_others_posts = 'delete_others_chuong_truyens';
+        $chuong_truyen->cap->edit_published_posts = 'edit_published_chuong_truyens';
+    }
+    
+    // Grant capabilities to admin
+    $admin = get_role('administrator');
+    if ($admin) {
+        $admin->add_cap('edit_truyen_chus');
+        $admin->add_cap('edit_published_truyen_chus');
+        $admin->add_cap('edit_others_truyen_chus');
+        $admin->add_cap('publish_truyen_chus');
+        $admin->add_cap('delete_truyen_chus');
+        $admin->add_cap('delete_published_truyen_chus');
+        $admin->add_cap('delete_others_truyen_chus');
+        $admin->add_cap('edit_chuong_truyens');
+        $admin->add_cap('edit_published_chuong_truyens');
+        $admin->add_cap('edit_others_chuong_truyens');
+        $admin->add_cap('publish_chuong_truyens');
+        $admin->add_cap('delete_chuong_truyens');
+        $admin->add_cap('delete_published_chuong_truyens');
+        $admin->add_cap('delete_others_chuong_truyens');
+    }
+}
+add_action('init', 'add_custom_capabilities_to_post_types', 999);
+
+/**
+ * Restrict post visibility based on user role
+ */
+function restrict_post_visibility_by_role($query) {
+    if (is_admin() && $query->is_main_query()) {
+        $current_user = wp_get_current_user();
+        $post_type = $query->get('post_type');
+        
+        // Only apply to truyen_chu and chuong_truyen
+        if ($post_type !== 'truyen_chu' && $post_type !== 'chuong_truyen') {
+            return;
+        }
+        
+        // Tác giả: only see their own posts
+        if (in_array('tac_gia', $current_user->roles)) {
+            $query->set('author', $current_user->ID);
+        }
+        
+        // Quản lý: see all posts except admin's
+        elseif (in_array('quan_ly', $current_user->roles)) {
+            // Get all admin user IDs
+            $admin_users = get_users(array('role' => 'administrator'));
+            $admin_ids = array_map(function($user) {
+                return $user->ID;
+            }, $admin_users);
+            
+            // Exclude admin posts
+            if (!empty($admin_ids)) {
+                $query->set('author__not_in', $admin_ids);
+            }
+        }
+    }
+}
+add_action('pre_get_posts', 'restrict_post_visibility_by_role');
+
+/**
+ * Register admin menu for author applications
+ */
+function register_author_applications_menu() {
+    add_menu_page(
+        'Đăng ký tác giả',           // Page title
+        'Đăng ký tác giả',           // Menu title
+        'manage_options',             // Capability
+        'author-applications',        // Menu slug
+        'render_author_applications_page', // Callback function
+        'dashicons-edit',             // Icon
+        25                            // Position
+    );
+}
+add_action('admin_menu', 'register_author_applications_menu');
+
+/**
+ * Render author applications page
+ */
+function render_author_applications_page() {
+    // Handle bulk actions
+    if (isset($_POST['action']) && isset($_POST['applications'])) {
+        check_admin_referer('bulk-applications');
+        
+        $action = $_POST['action'];
+        $application_ids = array_map('intval', $_POST['applications']);
+        
+        foreach ($application_ids as $user_id) {
+            if ($action === 'approve') {
+                approve_author_application($user_id);
+            } elseif ($action === 'reject') {
+                reject_author_application($user_id);
+            }
+        }
+        
+        echo '<div class="notice notice-success is-dismissible"><p>Đã cập nhật trạng thái cho ' . count($application_ids) . ' đơn đăng ký.</p></div>';
+    }
+    
+    // Handle individual actions
+    if (isset($_GET['action']) && isset($_GET['user_id'])) {
+        $user_id = intval($_GET['user_id']);
+        check_admin_referer('application-action-' . $user_id);
+        
+        if ($_GET['action'] === 'approve') {
+            approve_author_application($user_id);
+            echo '<div class="notice notice-success is-dismissible"><p>Đã duyệt đơn đăng ký.</p></div>';
+        } elseif ($_GET['action'] === 'reject') {
+            reject_author_application($user_id);
+            echo '<div class="notice notice-success is-dismissible"><p>Đã từ chối đơn đăng ký.</p></div>';
+        }
+    }
+    
+    // Get all users with applications
+    $users = get_users(array(
+        'meta_key' => '_author_application',
+        'meta_compare' => 'EXISTS'
+    ));
+    
+    ?>
+    <div class="wrap">
+        <h1 class="wp-heading-inline">Đăng ký tác giả</h1>
+        <hr class="wp-header-end">
+        
+        <form method="post">
+            <?php wp_nonce_field('bulk-applications'); ?>
+            
+            <div class="tablenav top">
+                <div class="alignleft actions bulkactions">
+                    <select name="action">
+                        <option value="-1">Hành động hàng loạt</option>
+                        <option value="approve">Duyệt</option>
+                        <option value="reject">Từ chối</option>
+                    </select>
+                    <input type="submit" class="button action" value="Áp dụng">
+                </div>
+            </div>
+            
+            <table class="wp-list-table widefat fixed striped">
+                <thead>
+                    <tr>
+                        <td class="check-column"><input type="checkbox" id="cb-select-all"></td>
+                        <th>Người dùng</th>
+                        <th>Email</th>
+                        <th>Ngày gửi</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($users)) : ?>
+                        <tr>
+                            <td colspan="6">Chưa có đơn đăng ký nào.</td>
+                        </tr>
+                    <?php else : ?>
+                        <?php foreach ($users as $user) : 
+                            $application = get_user_meta($user->ID, '_author_application', true);
+                            $status = isset($application['status']) ? $application['status'] : 'pending';
+                            $submitted_at = isset($application['submitted_at']) ? $application['submitted_at'] : '';
+                            
+                            $status_labels = array(
+                                'pending' => '<span style="color: orange;">⏳ Đang chờ</span>',
+                                'approved' => '<span style="color: green;">✓ Đã duyệt</span>',
+                                'rejected' => '<span style="color: red;">✗ Từ chối</span>'
+                            );
+                            $status_label = isset($status_labels[$status]) ? $status_labels[$status] : $status;
+                        ?>
+                            <tr>
+                                <th scope="row" class="check-column">
+                                    <input type="checkbox" name="applications[]" value="<?php echo $user->ID; ?>">
+                                </th>
+                                <td><strong><?php echo esc_html($user->display_name); ?></strong></td>
+                                <td><?php echo esc_html($user->user_email); ?></td>
+                                <td><?php echo $submitted_at ? date('d/m/Y H:i', strtotime($submitted_at)) : '—'; ?></td>
+                                <td><?php echo $status_label; ?></td>
+                                <td>
+                                    <a href="<?php echo admin_url('user-edit.php?user_id=' . $user->ID); ?>">Xem</a>
+                                    <?php if ($status === 'pending') : ?>
+                                        | <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=author-applications&action=approve&user_id=' . $user->ID), 'application-action-' . $user->ID); ?>" style="color: green;">Duyệt</a>
+                                        | <a href="<?php echo wp_nonce_url(admin_url('admin.php?page=author-applications&action=reject&user_id=' . $user->ID), 'application-action-' . $user->ID); ?>" style="color: red;">Từ chối</a>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        $('#cb-select-all').on('click', function() {
+            $('input[name="applications[]"]').prop('checked', this.checked);
+        });
+    });
+    </script>
+    <?php
+}
+
+/**
+ * Approve author application
+ */
+function approve_author_application($user_id) {
+    $application = get_user_meta($user_id, '_author_application', true);
+    if ($application) {
+        $application['status'] = 'approved';
+        update_user_meta($user_id, '_author_application', $application);
+        
+        // Change user role to tac_gia
+        $user = get_user_by('id', $user_id);
+        if ($user) {
+            $user->set_role('tac_gia');
+        }
+        
+        // Send approval email
+        send_application_status_email($user_id, 'approved');
+    }
+}
+
+/**
+ * Reject author application
+ */
+function reject_author_application($user_id) {
+    $application = get_user_meta($user_id, '_author_application', true);
+    if ($application) {
+        $application['status'] = 'rejected';
+        update_user_meta($user_id, '_author_application', $application);
+        
+        // Send rejection email
+        send_application_status_email($user_id, 'rejected');
+    }
+}
+
+/**
+ * Send email notification on application status change
+ */
+function send_application_status_email($user_id, $status) {
+    $user = get_user_by('id', $user_id);
+    if (!$user) {
+        return;
+    }
+    
+    $to = $user->user_email;
+    
+    if ($status === 'approved') {
+        $subject = '[' . get_bloginfo('name') . '] Đơn đăng ký tác giả đã được duyệt';
+        $message = "Xin chào " . $user->display_name . ",\n\n";
+        $message .= "Chúc mừng! Đơn đăng ký làm tác giả của bạn đã được duyệt.\n\n";
+        $message .= "Bạn có thể bắt đầu đăng truyện tại: " . admin_url('post-new.php?post_type=truyen_chu') . "\n\n";
+        $message .= "Hướng dẫn:\n";
+        $message .= "1. Đăng nhập vào tài khoản\n";
+        $message .= "2. Vào menu 'Truyện chữ' → 'Thêm truyện'\n";
+        $message .= "3. Điền thông tin và xuất bản truyện của bạn\n\n";
+        $message .= "Chúc bạn viết truyện vui vẻ!\n\n";
+        $message .= "Trân trọng,\n";
+        $message .= get_bloginfo('name');
+    } else {
+        $subject = '[' . get_bloginfo('name') . '] Đơn đăng ký tác giả';
+        $message = "Xin chào " . $user->display_name . ",\n\n";
+        $message .= "Cảm ơn bạn đã quan tâm đến việc trở thành tác giả trên " . get_bloginfo('name') . ".\n\n";
+        $message .= "Rất tiếc, đơn đăng ký của bạn chưa được chấp nhận lúc này.\n\n";
+        $message .= "Nếu bạn có thắc mắc, vui lòng liên hệ với chúng tôi qua email: " . get_option('admin_email') . "\n\n";
+        $message .= "Trân trọng,\n";
+        $message .= get_bloginfo('name');
+    }
+    
+    wp_mail($to, $subject, $message);
+}
+
