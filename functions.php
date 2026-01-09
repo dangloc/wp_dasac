@@ -450,6 +450,21 @@ function register_taxonomies_truyen_chu() {
             'add_new_item' => 'Thêm trạng thái',
         )
     ));
+
+    register_taxonomy('nguon_goc', 'truyen_chu', array(
+        'label' => 'Nguồn gốc',
+        'public' => true,
+        'hierarchical' => true,
+        'show_in_rest' => true,
+        'labels' => array(
+            'name' => 'Nguồn gốc',
+            'singular_name' => 'Nguồn gốc',
+            'search_items' => 'Tìm nguồn gốc',
+            'all_items' => 'Tất cả nguồn gốc',
+            'edit_item' => 'Chỉnh sửa nguồn gốc',
+            'add_new_item' => 'Thêm nguồn gốc',
+        )
+    ));
 }
 add_action('init', 'register_taxonomies_truyen_chu');
 
