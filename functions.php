@@ -2891,6 +2891,8 @@ function setup_custom_roles() {
         'edit_published_chuong_truyens' => true,
         'delete_chuong_truyens' => true,
         'delete_published_chuong_truyens' => true,
+        // Import chapters capability
+        'import_chapters' => true,
     ));
     
     // Create "Quản lý" role with management capabilities
