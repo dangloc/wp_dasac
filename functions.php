@@ -2977,6 +2977,8 @@ function add_custom_capabilities_to_post_types() {
         $admin->add_cap('delete_chuong_truyens');
         $admin->add_cap('delete_published_chuong_truyens');
         $admin->add_cap('delete_others_chuong_truyens');
+        // Import chapters capability
+        $admin->add_cap('import_chapters');
     }
 }
 add_action('init', 'add_custom_capabilities_to_post_types', 999);
